@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Attendance | EduCloud</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/attendance.css') }}"
+    >
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar" id="sidebar">
+
+    <!-- BRAND -->
+    <div class="brand-section">
+        <div class="brand-icon">
+            <i class="bi bi-cloud-check"></i>
+        </div>
+
+        <div class="brand-text">
+            <h2>EduCloud</h2>
+            <span>Academic Portal</span>
+        </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- SCROLLABLE MENU -->
+    <div class="sidebar-nav">
+
+        <!-- MAIN MENU -->
+        <div class="menu-section">
+
+            <div class="menu-title">MAIN MENU</div>
+
+            <a href="/student/dashboard" class="nav-item">
+                <i class="bi bi-grid-1x2"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/student/profile" class="nav-item">
+                <i class="bi bi-person"></i>
+                <span>Profile</span>
+            </a>
+
+            <a href="/student/attendance" class="nav-item active">
+                <i class="bi bi-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+
+            <a href="/student/timetable" class="nav-item">
+                <i class="bi bi-clock"></i>
+                <span>Timetable</span>
+            </a>
+
+            <a href="/student/marks" class="nav-item">
+                <i class="bi bi-bar-chart"></i>
+                <span>Marks &amp; CGPA</span>
+            </a>
+
+            <a href="/student/exams" class="nav-item">
+                <i class="bi bi-journal-text"></i>
+                <span>Exams</span>
+            </a>
+
+            <a href="/student/hall-ticket" class="nav-item">
+                <i class="bi bi-ticket-perforated"></i>
+                <span>Hall Ticket</span>
+            </a>
+
+        </div>
+
+        <!-- CAMPUS MENU -->
+        <div class="menu-section campus-section">
+
+            <div class="menu-title">CAMPUS</div>
+
+            <a href="/student/events" class="nav-item">
+                <i class="bi bi-calendar-event"></i>
+                <span>Events</span>
+            </a>
+
+            <a href="/student/placements" class="nav-item">
+                <i class="bi bi-briefcase"></i>
+                <span>Placements</span>
+            </a>
+
+            <a href="/student/hackathons" class="nav-item">
+                <i class="bi bi-trophy"></i>
+                <span>Hackathons</span>
+            </a>
+
+            <a href="/student/venues" class="nav-item">
+                <i class="bi bi-geo-alt"></i>
+                <span>Venue Updates</span>
+            </a>
+
+            <a href="/student/notifications" class="nav-item">
+                <i class="bi bi-bell"></i>
+                <span>Notifications</span>
+                <span class="notification-count">11</span>
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="sidebar-account">
+
+        <div class="menu-title">ACCOUNT</div>
+
+        <a href="#" class="nav-item">
+            <i class="bi bi-gear"></i>
+            <span>Settings</span>
+        </a>
+
+        <a href="/logout" class="nav-item">
+            <i class="bi bi-box-arrow-left"></i>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+    <!-- STUDENT CARD -->
+    <div class="sidebar-user">
+
+        <div class="user-avatar-small">
+            {{ student.name[:2].upper() }}
+        </div>
+
+        <div class="sidebar-user-info">
+            <strong>{{ student.name }}</strong>
+            <span>Student · {{ student.register_no }}</span>
+        </div>
+
+        <i class="bi bi-three-dots"></i>
+
+    </div>
+
+</aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="breadcrumb-area">
+                <span>Student Portal</span>
+                <i class="bi bi-chevron-right"></i>
+                <strong>Attendance</strong>
+            </div>
+
+            <div class="topbar-actions">
+
+                <button class="topbar-icon">
+                    <i class="bi bi-search"></i>
+                </button>
+
+                <button class="topbar-icon notification-button" type="button"
+                        aria-label="Notifications"
+                        onclick="window.location.href='/student/notifications'">
+                    <i class="bi bi-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="topbar-divider"></div>
+
+                <div class="topbar-user">
+
+                    <div class="topbar-avatar">
+                        {{ student.name[:2].upper() }}
+                    </div>
+
+                    <div class="topbar-user-info">
+                        <strong>{{ student.name }}</strong>
+                        <span>{{ student.department }} · {{ student.year }} Year</span>
+                    </div>
+
+                    <i class="bi bi-chevron-down"></i>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+
+        <div class="page-content">
+
+            <!-- PAGE HEADER -->
+
+            <section class="page-header">
+
+                <span class="page-label">
+                    ACADEMIC RECORD
+                </span>
+
+                <h1>Attendance</h1>
+
+                <p>
+                    Track your attendance and maintain your academic eligibility.
+                </p>
+
+            </section>
+
+
+            <!-- ================= OVERALL ATTENDANCE ================= -->
+
+            <section class="attendance-overview card-box">
+
+                <div class="attendance-main">
+
+                    <div class="attendance-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+
+                    <div class="attendance-title">
+
+                        <span>
+                            OVERALL ATTENDANCE
+                        </span>
+
+                        <h2>
+                            {{ attendance_percentage }}%
+                        </h2>
+
+                        {% if attendance_percentage >= 75 %}
+                        <p>
+                            Your attendance is above the required percentage.
+                        </p>
+                        {% else %}
+                        <p>
+                            Your attendance is below the required percentage.
+                        </p>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- PROGRESS -->
+
+                <div class="overall-progress">
+
+                    <div
+    class="progress-fill"
+    data-width="{{ attendance_percentage }}"
+></div>
+
+                    <div class="progress-track">
+
+                        <div
+    class="progress-fill"
+    data-width="{{ attendance_percentage }}"
+></div>
+
+                    </div>
+
+                    <div class="progress-footer">
+
+                        <span>
+                            Minimum required: 75%
+                        </span>
+
+                        <span>
+                            {% if attendance_percentage >= 75 %}
+                                +{{ '%.1f'|format(attendance_percentage - 75) }}% above requirement
+                            {% else %}
+                                {{ '%.1f'|format(75 - attendance_percentage) }}% below requirement
+                            {% endif %}
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- STATS -->
+
+                <div class="attendance-stats">
+
+                    <div class="stat-box">
+
+                        <div class="stat-icon present">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+
+                        <div>
+                            <span>Present</span>
+                            <strong>{{ present }}</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-box">
+
+                        <div class="stat-icon absent">
+                            <i class="bi bi-x-lg"></i>
+                        </div>
+
+                        <div>
+                            <span>Absent</span>
+                            <strong>{{ absent }}</strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-box">
+
+                        <div class="stat-icon total">
+                            <i class="bi bi-list-check"></i>
+                        </div>
+
+                        <div>
+                            <span>Total Classes</span>
+                            <strong>{{ total }}</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= SUBJECT ATTENDANCE ================= -->
+
+            <section class="subject-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-label">
+                            SUBJECT-WISE
+                        </span>
+
+                        <h2>
+                            Attendance Details
+                        </h2>
+
+                    </div>
+
+                    <div class="semester-badge">
+                        <i class="bi bi-calendar3"></i>
+                        Semester {{ student.semester }}
+                    </div>
+
+                </div>
+
+
+                <!-- TABLE -->
+
+                <div class="attendance-table-card card-box">
+
+                    <div class="table-header">
+
+                        <div>Subject</div>
+                        <div>Present</div>
+                        <div>Total</div>
+                        <div>Attendance</div>
+                        <div>Status</div>
+
+                    </div>
+
+
+                    {% for record in attendance_records %}
+
+                    <div class="attendance-row">
+
+                        <div class="subject-name">
+
+                            <div class="subject-icon purple">
+                                <i class="bi bi-book"></i>
+                            </div>
+
+                            <div>
+                                <strong>{{ record.subject }}</strong>
+                                <span>Semester {{ student.semester }}</span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="attendance-number">
+                            {{ record.present }}
+                        </div>
+
+
+                        <div class="attendance-number">
+                            {{ record.total }}
+                        </div>
+
+
+                        <div class="attendance-percentage">
+
+                            <div class="percentage-top">
+                                <strong>
+                                    {{ record.percentage }}%
+                                </strong>
+                            </div>
+
+                            <div
+                                class="subject-progress{% if record.status == 'Warning' %} warning-progress{% endif %}"
+                            >
+                               <span data-width="{{ record.percentage }}"></span>
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            {% if record.status == "Excellent" %}
+
+                            <span class="status excellent">
+                                Excellent
+                            </span>
+
+                            {% elif record.status == "Good" %}
+
+                            <span class="status good">
+                                Good
+                            </span>
+
+                            {% else %}
+
+                            <span class="status warning">
+                                Warning
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="attendance-row">
+
+                        <div class="subject-name">
+
+                            <div class="subject-icon purple">
+                                <i class="bi bi-info-circle"></i>
+                            </div>
+
+                            <div>
+                                <strong>No attendance records</strong>
+                                <span>No attendance data available yet</span>
+                            </div>
+
+                        </div>
+
+                        <div class="attendance-number">
+                            0
+                        </div>
+
+                        <div class="attendance-number">
+                            0
+                        </div>
+
+                        <div class="attendance-percentage">
+
+                            <div class="percentage-top">
+                                <strong>0%</strong>
+                            </div>
+
+                            <div class="subject-progress">
+                                <span style="width: 0%;"></span>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <span class="status warning">
+                                No Data
+                            </span>
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= ATTENDANCE INFORMATION ================= -->
+
+            <section class="bottom-grid">
+
+
+                <!-- ELIGIBILITY -->
+
+                <div class="requirement-card card-box">
+
+                    <div class="info-card-header">
+
+                        <div class="info-card-icon blue">
+                            <i class="bi bi-info-circle"></i>
+                        </div>
+
+                        <div>
+
+                            <span class="section-label">
+                                ELIGIBILITY
+                            </span>
+
+                            <h3>
+                                Attendance Requirement
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <p>
+                        Students must maintain at least
+                        <strong>75%</strong>
+                        attendance to remain eligible for academic
+                        activities and examinations.
+                    </p>
+
+
+                    <div class="requirement-highlight">
+
+                        {% if attendance_percentage >= 75 %}
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        <span>
+                            Your current attendance meets the requirement.
+                        </span>
+
+                        {% else %}
+
+                        <i class="bi bi-exclamation-circle-fill"></i>
+
+                        <span>
+                            Your current attendance is below the required 75%.
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- ATTENDANCE ALERT -->
+
+                <div class="warning-card card-box">
+
+                    <div class="info-card-header">
+
+                        <div class="info-card-icon orange">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+
+                        <div>
+
+                            <span class="section-label">
+                                ATTENTION
+                            </span>
+
+                            <h3>
+                                Attendance Alert
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    {% set warning_subjects =
+                        attendance_records
+                        | selectattr('percentage', 'lt', 75)
+                        | list
+                    %}
+
+                    {% set low_subjects =
+                        attendance_records
+                        | selectattr('percentage', 'lt', 80)
+                        | list
+                    %}
+
+
+                    {% if warning_subjects %}
+
+                    <p>
+
+                        Your attendance is below the required
+                        <strong>75%</strong> in
+
+                        <strong>
+                            {{ warning_subjects[0].subject }}
+                        </strong>.
+
+                        Please attend classes regularly to maintain eligibility.
+
+                    </p>
+
+
+                    <div class="warning-highlight">
+
+                        <i class="bi bi-exclamation-circle-fill"></i>
+
+                        <span>
+                            {{ warning_subjects|length }}
+                            subject(s) below the minimum threshold.
+                        </span>
+
+                    </div>
+
+
+                    {% elif low_subjects %}
+
+                    <p>
+
+                        <strong>
+                            {{ low_subjects[0].subject }}
+                        </strong>
+
+                        attendance is
+
+                        <strong>
+                            {{ low_subjects[0].percentage }}%
+                        </strong>.
+
+                        Continue attending classes regularly to avoid
+                        falling below the required percentage.
+
+                    </p>
+
+
+                    <div class="warning-highlight">
+
+                        <i class="bi bi-exclamation-circle-fill"></i>
+
+                        <span>
+                            {{ low_subjects|length }}
+                            subject(s) need attention.
+                        </span>
+
+                    </div>
+
+
+                    {% else %}
+
+                    <p>
+
+                        Your attendance is currently above the required
+                        <strong>75%</strong> in all available subjects.
+
+                    </p>
+
+
+                    <div class="warning-highlight">
+
+                        <i class="bi bi-check-circle-fill"></i>
+
+                        <span>
+                            No attendance alerts at the moment.
+                        </span>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- LAST UPDATED -->
+
+            <div class="last-updated">
+
+                <i class="bi bi-arrow-clockwise"></i>
+
+                Last updated:
+
+                <strong>
+                    Data loaded from EduCloud database
+                </strong>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- ================= MOBILE MENU ================= -->
+
+<button
+    class="mobile-menu-button"
+    id="mobileMenuButton"
+>
+
+    <i class="bi bi-list"></i>
+
+</button>
+
+
+<script>
+
+const mobileButton =
+    document.getElementById("mobileMenuButton");
+
+const sidebar =
+    document.getElementById("sidebar");
+
+mobileButton.addEventListener("click", function () {
+    sidebar.classList.toggle("show");
+});
+
+
+/* Set attendance progress widths */
+
+document.querySelectorAll("[data-width]").forEach(function (element) {
+
+    const width = element.getAttribute("data-width");
+
+    element.style.width = width + "%";
+
+});
+
+</script>
+
+</body>
+</html>

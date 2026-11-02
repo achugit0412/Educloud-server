@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venue Updates | EduCloud</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/staff_venues.css') }}">
+</head>
+<body>
+
+<div class="layout">
+
+    
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <!-- BRAND -->
+    <div class="brand">
+        <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div>
+            <h2>EduCloud</h2>
+            <span>Staff Portal</span>
+        </div>
+    </div>
+
+    <!-- STAFF MENU -->
+    <div class="menu-title">STAFF MENU</div>
+
+    <nav class="sidebar-menu">
+
+        <a href="/staff/dashboard">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/staff/students">
+            <i class="bi bi-people-fill"></i>
+            <span>Students</span>
+        </a>
+
+        <a href="/staff/attendance">
+            <i class="bi bi-calendar-check-fill"></i>
+            <span>Attendance</span>
+        </a>
+
+        <a href="/staff/marks">
+            <i class="bi bi-bar-chart-fill"></i>
+            <span>Marks &amp; Grades</span>
+        </a>
+
+        <a href="/staff/exams">
+            <i class="bi bi-journal-text"></i>
+            <span>Exams</span>
+        </a>
+
+        <a href="/staff/timetable">
+            <i class="bi bi-calendar3"></i>
+            <span>Timetable</span>
+        </a>
+
+        <a href="/staff/notifications">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notifications</span>
+        </a>
+
+        <a href="/staff/venue-updates" class="active">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>Venue Updates</span>
+        </a>
+
+        <a href="/staff/events">
+            <i class="bi bi-calendar-event-fill"></i>
+            <span>Events</span>
+        </a>
+
+        <a href="/staff/placements">
+            <i class="bi bi-briefcase-fill"></i>
+            <span>Placements</span>
+        </a>
+
+    </nav>
+
+    <!-- ACCOUNT -->
+    <!-- ACCOUNT SECTION -->
+<div class="sidebar-bottom">
+
+    <div class="menu-title">ACCOUNT</div>
+
+    <a href="/staff/profile">
+        <i class="bi bi-person-circle"></i>
+        <span>My Profile</span>
+    </a>
+
+    <a href="/staff/change-password">
+        <i class="bi bi-shield-lock-fill"></i>
+        <span>Change Password</span>
+    </a>
+
+    <a href="/logout">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+
+</div>
+
+</aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>Venue Updates</h1>
+                <p>Manage classroom changes and inform students.</p>
+            </div>
+            <button class="primary-btn" onclick="openModal()">
+                + Add Venue Update
+            </button>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span>Total Updates</span>
+                <h2>{{ updates|length }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Class Changes</span>
+                <h2>{{ updates|selectattr('update_type', 'equalto', 'Class')|list|length }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Exam Changes</span>
+                <h2>{{ updates|selectattr('update_type', 'equalto', 'Exam')|list|length }}</h2>
+            </div>
+        </section>
+
+        <section class="filter-card">
+            <input
+                id="searchInput"
+                type="text"
+                placeholder="Search event, course or venue..."
+                oninput="filterUpdates()">
+
+            <select id="typeFilter" onchange="filterUpdates()">
+                <option value="all">All Types</option>
+                <option value="Class">Class</option>
+                <option value="Exam">Exam</option>
+                <option value="Event">Event</option>
+                <option value="Lab">Lab</option>
+            </select>
+        </section>
+
+        <section class="updates-card">
+            <h2>Recent Venue Updates</h2>
+
+            <div id="updatesList">
+
+                {% for u in updates %}
+
+                <article class="update-item"
+                         data-id="{{ u.id }}"
+                         data-subject="{{ u.subject_event|e }}"
+                         data-type="{{ u.update_type }}"
+                         data-date="{{ u.update_date_input }}"
+                         data-time="{{ u.update_time_input }}"
+                         data-old="{{ u.old_venue or '' }}"
+                         data-new="{{ u.new_venue }}"
+                         data-audience="{{ u.target_audience or 'student' }}">
+
+                    <div class="update-icon">📍</div>
+
+                    <div class="update-content">
+
+                        <div class="title-row">
+                            <h3>{{ u.subject_event }}</h3>
+                            <span class="type-badge">{{ u.update_type }}</span>
+                        </div>
+
+                        <p class="course">
+                            Audience: {{ u.target_audience or 'All Students' }}
+                        </p>
+
+                        <div class="venue-change">
+                            <span class="old-venue">
+                                {{ u.old_venue or 'Not specified' }}
+                            </span>
+                            <span class="arrow">→</span>
+                            <span class="new-venue">{{ u.new_venue }}</span>
+                        </div>
+
+                        <div class="meta">
+                            <span>
+                                📅
+                                {{ u.update_date_display }}
+                            </span>
+
+                            <span>
+                                🕒
+                                {{ u.update_time_display }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="actions">
+                        <button type="button" class="edit-btn"
+                                onclick="editUpdate(this)">
+                            Edit
+                        </button>
+
+                        <button type="button" class="delete-btn"
+                                onclick="deleteUpdate(this)">
+                            Delete
+                        </button>
+                    </div>
+
+                </article>
+
+                {% else %}
+
+                <p class="empty">
+                    No venue updates yet. Click "Add Venue Update" to create one.
+                </p>
+
+                {% endfor %}
+
+            </div>
+        </section>
+
+    </main>
+</div>
+
+
+<!-- ADD / EDIT MODAL -->
+
+<div class="modal-overlay" id="venueModal">
+    <div class="modal-box">
+
+        <div class="modal-heading">
+            <div>
+                <h2 id="modalTitle">Add Venue Update</h2>
+                <p>Enter the venue change details below.</p>
+            </div>
+
+            <button type="button" class="close-btn"
+                    onclick="closeModal()">×</button>
+        </div>
+
+        <form id="venueForm" onsubmit="saveUpdate(event)">
+
+            <input type="hidden" id="updateId">
+
+            <label for="subjectEvent">Event / Subject *</label>
+            <input
+                id="subjectEvent"
+                required
+                maxlength="150"
+                placeholder="e.g. Computer Networks Venue Change">
+
+            <label for="updateType">Update Type *</label>
+            <select id="updateType" required>
+                <option value="">Select Type</option>
+                <option value="Class">Class</option>
+                <option value="Exam">Exam</option>
+                <option value="Event">Event</option>
+                <option value="Lab">Lab</option>
+            </select>
+
+            <div class="form-grid">
+                <div>
+                    <label for="oldVenue">Old Venue</label>
+                    <input id="oldVenue" maxlength="100"
+                           placeholder="e.g. CSE-203">
+                </div>
+
+                <div>
+                    <label for="newVenue">New Venue *</label>
+                    <input id="newVenue" required maxlength="100"
+                           placeholder="e.g. CSE-204">
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div>
+                    <label for="updateDate">Change Date *</label>
+                    <input id="updateDate" type="date" required>
+                </div>
+
+                <div>
+                    <label for="updateTime">Change Time</label>
+                    <input id="updateTime" type="time">
+                </div>
+            </div>
+
+            <label for="targetAudience">Target Audience</label>
+            <select id="targetAudience">
+                <option value="student">All Students</option>
+                <option value="III CSE-A">III CSE-A</option>
+                <option value="III CSE-B">III CSE-B</option>
+                <option value="III CSE-C">III CSE-C</option>
+                <option value="Faculty">Faculty</option>
+            </select>
+
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn"
+                        onclick="closeModal()">Cancel</button>
+
+                <button type="submit" class="primary-btn" id="saveBtn">
+                    Save Update
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<script>
+const modal = document.getElementById("venueModal");
+
+function openModal() {
+    document.getElementById("venueForm").reset();
+    document.getElementById("updateId").value = "";
+    document.getElementById("modalTitle").textContent = "Add Venue Update";
+    document.getElementById("saveBtn").textContent = "Save Update";
+    modal.classList.add("show");
+}
+
+function closeModal() {
+    modal.classList.remove("show");
+}
+
+async function saveUpdate(event) {
+    event.preventDefault();
+
+    const id = document.getElementById("updateId").value;
+
+    const payload = {
+        subject_event: document.getElementById("subjectEvent").value.trim(),
+        update_type: document.getElementById("updateType").value,
+        update_date: document.getElementById("updateDate").value,
+        update_time: document.getElementById("updateTime").value,
+        old_venue: document.getElementById("oldVenue").value.trim(),
+        new_venue: document.getElementById("newVenue").value.trim(),
+        target_audience: document.getElementById("targetAudience").value
+    };
+
+    const url = id
+        ? `/staff/venue-updates/edit/${id}`
+        : "/staff/venue-updates/add";
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const responseText = await response.text();
+        let result;
+
+        try {
+            result = JSON.parse(responseText);
+        } catch {
+            console.error("Server returned HTML instead of JSON:", responseText);
+            throw new Error(
+                `Server returned HTML instead of JSON (HTTP ${response.status}). Check the Flask terminal.`
+            );
+        }
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Unable to save venue update.");
+        }
+
+        window.location.href = "/staff/venue-updates";
+
+    } catch (error) {
+        console.error("Venue update error:", error);
+        alert(error.message);
+    }
+}
+
+function editUpdate(button) {
+    const item = button.closest(".update-item");
+
+    document.getElementById("updateId").value = item.dataset.id;
+    document.getElementById("subjectEvent").value = item.dataset.subject;
+    document.getElementById("updateType").value = item.dataset.type;
+    document.getElementById("updateDate").value = item.dataset.date;
+    document.getElementById("updateTime").value = item.dataset.time;
+    document.getElementById("oldVenue").value = item.dataset.old;
+    document.getElementById("newVenue").value = item.dataset.new;
+    document.getElementById("targetAudience").value = item.dataset.audience;
+
+    document.getElementById("modalTitle").textContent = "Edit Venue Update";
+    document.getElementById("saveBtn").textContent = "Save Changes";
+
+    modal.classList.add("show");
+}
+
+async function deleteUpdate(button) {
+    const item = button.closest(".update-item");
+
+    if (!confirm("Are you sure you want to delete this venue update?")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `/staff/venue-updates/delete/${item.dataset.id}`,
+            { method: "POST" }
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Unable to delete venue update.");
+        }
+
+        window.location.reload();
+
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+function filterUpdates() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const type = document.getElementById("typeFilter").value;
+
+    document.querySelectorAll(".update-item").forEach(item => {
+        const searchableText = [
+            item.dataset.subject,
+            item.dataset.old,
+            item.dataset.new,
+            item.dataset.audience
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = searchableText.includes(search);
+        const matchesType = type === "all" || item.dataset.type === type;
+
+        item.style.display = matchesSearch && matchesType ? "flex" : "none";
+    });
+}
+</script>
+
+</body>
+</html>

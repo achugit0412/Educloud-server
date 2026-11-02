@@ -1,0 +1,467 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance | EduCloud Staff Portal</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/staff_attendance.css') }}">
+</head>
+
+<body>
+<div class="portal">
+
+    <!-- SIDEBAR -->
+    <!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <!-- BRAND -->
+    <div class="brand">
+        <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div>
+            <h2>EduCloud</h2>
+            <span>Staff Portal</span>
+        </div>
+    </div>
+
+    <div class="menu-title">STAFF MENU</div>
+
+    <!-- MAIN MENU -->
+    <nav class="sidebar-menu">
+
+        <a href="/staff/dashboard">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/staff/students">
+            <i class="bi bi-people-fill"></i>
+            <span>Students</span>
+        </a>
+
+        <a href="/staff/attendance" class="active">
+            <i class="bi bi-calendar-check-fill"></i>
+            <span>Attendance</span>
+        </a>
+
+        <a href="/staff/marks">
+            <i class="bi bi-bar-chart-fill"></i>
+            <span>Marks &amp; Grades</span>
+        </a>
+
+        <a href="/staff/exams">
+            <i class="bi bi-journal-text"></i>
+            <span>Exams</span>
+        </a>
+
+        <a href="/staff/timetable">
+            <i class="bi bi-calendar3"></i>
+            <span>Timetable</span>
+        </a>
+
+        <a href="/staff/notifications">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notifications</span>
+        </a>
+
+        <a href="/staff/venue-updates">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>Venue Updates</span>
+        </a>
+
+        <a href="/staff/events">
+            <i class="bi bi-calendar-event"></i>
+            <span>Events</span>
+        </a>
+
+        <a href="/staff/placements">
+            <i class="bi bi-briefcase-fill"></i>
+            <span>Placements</span>
+        </a>
+
+    </nav>
+
+    <!-- BOTTOM MENU -->
+    <div class="sidebar-bottom">
+
+        <a href="/staff/profile">
+            <i class="bi bi-person-circle"></i>
+            <span>My Profile</span>
+        </a>
+
+        <a href="/staff/change-password">
+            <i class="bi bi-shield-lock-fill"></i>
+            <span>Change Password</span>
+        </a>
+
+        <a href="/logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <div class="breadcrumb">
+                    Staff Portal <i class="bi bi-chevron-right"></i> Attendance
+                </div>
+                <h1>Attendance Management</h1>
+                <p>Record and monitor student attendance.</p>
+            </div>
+
+            <div class="topbar-right">
+                <div class="staff-mini">
+                    <div class="staff-avatar">
+                        {{ session.get('name', 'ST')[:2]|upper }}
+                    </div>
+                    <div>
+                        <strong>{{ session.get('name', 'Staff') }}</strong>
+                        <small>Staff Portal</small>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="content">
+
+            <!-- SUMMARY -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
+                    <div>
+                        <span>Total Students</span>
+                        <h3 id="totalStudents">{{ total_students }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="bi bi-person-check-fill"></i></div>
+                    <div>
+                        <span>Present</span>
+                        <h3 id="presentCount">{{ present_count }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon red"><i class="bi bi-person-x-fill"></i></div>
+                    <div>
+                        <span>Absent</span>
+                        <h3 id="absentCount">{{ absent_count }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple"><i class="bi bi-percent"></i></div>
+                    <div>
+                        <span>Attendance Rate</span>
+                        <h3 id="attendanceRate">{{ attendance_rate }}%</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+                <div>
+                    <h2>Mark Attendance</h2>
+                    <p>Select the subject and date, then record each student's attendance.</p>
+                </div>
+
+                <button class="save-btn" type="button" onclick="saveAttendance()">
+                    <i class="bi bi-check2-circle"></i> Save Attendance
+                </button>
+            </div>
+
+            <!-- CONTROLS -->
+            <div class="control-panel">
+                <div class="control-group">
+                    <label for="subject">Subject</label>
+                    <select id="subject" required>
+                        <option value="">Select Subject</option>
+                        <option>Data Structures</option>
+                        <option>DBMS</option>
+                        <option>Computer Networks</option>
+                        <option>Operating Systems</option>
+                        <option>Artificial Intelligence</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="classFilter">Class</label>
+                    <select id="classFilter" onchange="filterStudents()">
+                        <option value="all">All Classes</option>
+                        <option value="CSE">CSE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="IT">IT</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="attendanceDate">Date</label>
+                    <input type="date" id="attendanceDate" value="{{ today }}">
+                </div>
+
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchStudent"
+                           placeholder="Search student..."
+                           oninput="filterStudents()">
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS -->
+            <div class="quick-bar">
+                <div>
+                    <strong>Attendance for selected date</strong>
+                    <span id="selectedDateText">{{ today }}</span>
+                </div>
+
+                <div class="quick-actions">
+                    <button type="button" onclick="markAll('Present')">
+                        <i class="bi bi-check-all"></i> Mark All Present
+                    </button>
+                    <button type="button" onclick="markAll('Absent')">
+                        <i class="bi bi-x-circle"></i> Mark All Absent
+                    </button>
+                </div>
+            </div>
+
+            <!-- TABLE -->
+            <div class="table-card">
+                <div class="table-header">
+                    <div>
+                        <strong>Student Attendance</strong>
+                        <span id="resultCount">{{ students|length }} students</span>
+                    </div>
+                    <span class="class-badge">Live Database Records</span>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Student</th>
+                                <th>Register No.</th>
+                                <th>Overall Attendance</th>
+                                <th>Today's Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="attendanceTable">
+                            {% for student in students %}
+                            <tr
+                                data-student-id="{{ student.student_id }}"
+                                data-department="{% set dept = student.department|upper %}{% if 'COMPUTER SCIENCE' in dept or dept == 'CSE' %}CSE{% elif 'ELECTRONICS' in dept or dept == 'ECE' %}ECE{% elif 'INFORMATION TECHNOLOGY' in dept or dept == 'IT' %}IT{% else %}{{ dept }}{% endif %}"
+                                data-year="{{ student.year }}"
+                                data-register="{{ student.register_no }}">
+
+                                <td class="row-number">{{ loop.index }}</td>
+
+                                <td>
+                                    <div class="student-cell">
+                                        <div class="student-avatar">{{ student.initials }}</div>
+                                        <div>
+                                            <strong>{{ student.name }}</strong>
+                                            <span>{{ student.department }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>{{ student.register_no }}</td>
+
+                                <td>
+                                    {% if student.attendance_percentage is not none %}
+                                        {% if student.attendance_percentage >= 85 %}
+                                            <span class="percentage good">{{ student.attendance_percentage }}%</span>
+                                        {% elif student.attendance_percentage >= 75 %}
+                                            <span class="percentage warning">{{ student.attendance_percentage }}%</span>
+                                        {% else %}
+                                            <span class="percentage danger">{{ student.attendance_percentage }}%</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="percentage">No data</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <button type="button"
+                                            class="attendance-btn"
+                                            data-status=""
+                                            onclick="toggleAttendance(this)">
+                                        <i class="bi bi-dash-circle"></i> Not Marked
+                                    </button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4">
+                                    No students found in the database.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- NOTE -->
+            <div class="info-card">
+                <i class="bi bi-info-circle-fill"></i>
+                <div>
+                    <strong>Attendance Policy</strong>
+                    <p>
+                        Students are generally expected to maintain at least
+                        75% attendance. Attendance percentages are calculated
+                        from records saved in the database.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<script>
+function setStatus(button, status) {
+    button.dataset.status = status;
+
+    if (status === "Present") {
+        button.className = "attendance-btn present";
+        button.innerHTML = '<i class="bi bi-check-circle-fill"></i> Present';
+    } else if (status === "Absent") {
+        button.className = "attendance-btn absent";
+        button.innerHTML = '<i class="bi bi-x-circle-fill"></i> Absent';
+    } else {
+        button.className = "attendance-btn";
+        button.innerHTML = '<i class="bi bi-dash-circle"></i> Not Marked';
+    }
+}
+
+function toggleAttendance(button) {
+    const current = button.dataset.status;
+    setStatus(button, current === "Present" ? "Absent" : "Present");
+    updateCounts();
+}
+
+function markAll(status) {
+    document.querySelectorAll("#attendanceTable tr[data-student-id]").forEach(row => {
+        setStatus(row.querySelector(".attendance-btn"), status);
+    });
+    updateCounts();
+}
+
+function updateCounts() {
+    const rows = [...document.querySelectorAll("#attendanceTable tr[data-student-id]")];
+
+    let present = 0;
+    let absent = 0;
+
+    rows.forEach(row => {
+        const status = row.querySelector(".attendance-btn").dataset.status;
+        if (status === "Present") present++;
+        if (status === "Absent") absent++;
+    });
+
+    const marked = present + absent;
+    const rate = marked ? (present / marked * 100).toFixed(1) : "0.0";
+
+    document.getElementById("presentCount").textContent = present;
+    document.getElementById("absentCount").textContent = absent;
+    document.getElementById("attendanceRate").textContent = rate + "%";
+}
+
+function filterStudents() {
+    const search = document.getElementById("searchStudent").value.toLowerCase().trim();
+    const department = document.getElementById("classFilter").value;
+    const rows = document.querySelectorAll("#attendanceTable tr[data-student-id]");
+
+    let visible = 0;
+
+    rows.forEach(row => {
+        const matchesSearch = row.innerText.toLowerCase().includes(search);
+        const matchesDepartment =
+            department === "all" || row.dataset.department === department;
+
+        const show = matchesSearch && matchesDepartment;
+        row.style.display = show ? "" : "none";
+
+        if (show) visible++;
+    });
+
+    document.getElementById("resultCount").textContent =
+        `${visible} student${visible !== 1 ? "s" : ""}`;
+}
+
+document.getElementById("attendanceDate").addEventListener("change", function() {
+    document.getElementById("selectedDateText").textContent = this.value;
+});
+
+async function saveAttendance() {
+    const subject = document.getElementById("subject").value;
+    const attendanceDate = document.getElementById("attendanceDate").value;
+
+    if (!subject) {
+        alert("Please select a subject.");
+        return;
+    }
+
+    const rows = [...document.querySelectorAll("#attendanceTable tr[data-student-id]")];
+
+    const records = rows
+        .filter(row => row.querySelector(".attendance-btn").dataset.status)
+        .map(row => ({
+            student_id: Number(row.dataset.studentId),
+            status: row.querySelector(".attendance-btn").dataset.status
+        }));
+
+    if (records.length === 0) {
+        alert("Please mark attendance for at least one student.");
+        return;
+    }
+
+    if (!confirm(`Save attendance for ${records.length} student(s)?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/staff/attendance/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                subject: subject,
+                attendance_date: attendanceDate,
+                records: records
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || "Unable to save attendance.");
+        }
+
+        alert(result.message || "Attendance saved successfully.");
+        window.location.reload();
+
+    } catch (error) {
+        alert(error.message || "Could not save attendance. Check your Flask route and server.");
+    }
+}
+
+updateCounts();
+</script>
+
+</body>
+</html>
+```

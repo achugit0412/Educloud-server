@@ -1,0 +1,1863 @@
+/* =========================================================
+   EDUCloud STUDENT DASHBOARD
+   Complete Dashboard CSS
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+body {
+    font-family: "Inter", sans-serif;
+    background: #080d1c;
+    color: #f1f5f9;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 295px;
+
+    background: #0d1325;
+
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+
+    padding: 22px 18px;
+
+    display: flex;
+    flex-direction: column;
+
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   SIDEBAR BRAND
+   ========================================================= */
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    padding: 0 12px 25px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+
+.sidebar-logo {
+    width: 47px;
+    height: 47px;
+
+    border-radius: 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        135deg,
+        #6366f1,
+        #4338ca
+    );
+
+    color: white;
+
+    font-size: 21px;
+
+    box-shadow:
+        0 8px 25px rgba(79, 70, 229, 0.28);
+}
+
+
+.sidebar-brand strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+
+.sidebar-brand small {
+    display: block;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+   ========================================================= */
+
+.sidebar-navigation {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding-top: 24px;
+
+    scrollbar-width: thin;
+    scrollbar-color: #68718a transparent;
+}
+
+
+.menu-label {
+    color: #7f8daa;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.4px;
+
+    padding: 0 14px;
+
+    margin-bottom: 10px;
+}
+
+
+.second-label {
+    margin-top: 24px;
+}
+
+
+/* =========================================================
+   SIDEBAR LINKS
+   ========================================================= */
+
+.sidebar-link {
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 0 14px;
+
+    margin-bottom: 5px;
+
+    border-radius: 10px;
+
+    color: #aeb8cc;
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    transition: all 0.2s ease;
+
+    position: relative;
+}
+
+
+.sidebar-link i {
+    width: 19px;
+
+    text-align: center;
+
+    font-size: 16px;
+
+    color: #9aa7c0;
+
+    transition: 0.2s;
+}
+
+
+.sidebar-link:hover {
+    background: rgba(99, 102, 241, 0.10);
+
+    color: #ffffff;
+}
+
+
+.sidebar-link:hover i {
+    color: #a5b4fc;
+}
+
+
+.sidebar-link.active {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(99, 102, 241, 0.20),
+            rgba(99, 102, 241, 0.07)
+        );
+
+    color: #ffffff;
+
+    border-left: 2px solid #6366f1;
+}
+
+
+.sidebar-link.active i {
+    color: #a5b4fc;
+}
+
+
+/* =========================================================
+   NOTIFICATION COUNT
+   ========================================================= */
+
+.notification-link {
+    justify-content: flex-start;
+}
+
+
+.notification-count {
+    margin-left: auto;
+
+    min-width: 20px;
+
+    height: 20px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #6366f1;
+
+    color: white;
+
+    font-size: 8px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   SIDEBAR BOTTOM
+   ========================================================= */
+
+.sidebar-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+
+    padding-top: 15px;
+}
+
+
+.sidebar-link.logout {
+    color: #9aa5ba;
+}
+
+
+.sidebar-link.logout:hover {
+    color: #f87171;
+
+    background: rgba(239, 68, 68, 0.07);
+}
+
+
+/* =========================================================
+   SIDEBAR USER
+   ========================================================= */
+
+.sidebar-user {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 12px;
+
+    padding: 11px;
+
+    border-radius: 11px;
+
+    background: rgba(255, 255, 255, 0.035);
+}
+
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #252b58;
+
+    color: #a5b4fc;
+
+    font-size: 9px;
+
+    font-weight: 800;
+}
+
+
+.user-details {
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.user-details strong {
+    display: block;
+
+    color: #e8ecf5;
+
+    font-size: 9px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.user-details small {
+    display: block;
+
+    color: #8b96ad;
+
+    font-size: 7px;
+
+    margin-top: 3px;
+}
+
+
+.sidebar-user > i {
+    color: #8490a8;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.main-content {
+    margin-left: 295px;
+
+    min-height: 100vh;
+
+    background: #080d1c;
+}
+
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar {
+    height: 72px;
+
+    padding: 0 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+
+    background: rgba(8, 13, 28, 0.94);
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 500;
+
+    backdrop-filter: blur(15px);
+}
+
+
+.page-location {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #8190aa;
+
+    font-size: 10px;
+}
+
+
+.page-location i {
+    font-size: 8px;
+
+    color: #4c5871;
+}
+
+
+.page-location strong {
+    color: #d5dbea;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   TOP BAR RIGHT
+   ========================================================= */
+
+.topbar-right {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+
+.topbar-button {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: rgba(255, 255, 255, 0.025);
+
+    color: #9ca9c0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    position: relative;
+
+    transition: 0.2s;
+}
+
+
+.topbar-button:hover {
+    color: #a5b4fc;
+
+    border-color: rgba(129, 140, 248, 0.35);
+}
+
+
+.notification-button span {
+    position: absolute;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: #6366f1;
+
+    top: 7px;
+    right: 7px;
+}
+
+
+/* =========================================================
+   TOP BAR USER
+   ========================================================= */
+
+.topbar-user {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding-left: 14px;
+
+    border-left: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+
+.topbar-avatar {
+    width: 35px;
+    height: 35px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #252b58;
+
+    color: #a5b4fc;
+
+    font-size: 9px;
+
+    font-weight: 800;
+}
+
+
+.topbar-user strong {
+    display: block;
+
+    color: #e7ebf3;
+
+    font-size: 10px;
+}
+
+
+.topbar-user small {
+    display: block;
+
+    color: #8995ac;
+
+    font-size: 7px;
+
+    margin-top: 2px;
+}
+
+
+.topbar-user > i {
+    color: #8290a8;
+
+    font-size: 9px;
+
+    margin-left: 5px;
+}
+
+
+.mobile-menu {
+    display: none;
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   DASHBOARD CONTAINER
+   ========================================================= */
+
+.dashboard-container {
+    max-width: 1500px;
+
+    margin: 0 auto;
+
+    padding: 34px 38px 50px;
+}
+
+
+/* =========================================================
+   WELCOME SECTION
+   ========================================================= */
+
+.welcome-section {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 28px;
+}
+
+
+.welcome-label {
+    color: #8f9cff;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+}
+
+
+.welcome-section h1 {
+    color: #f8fafc;
+
+    font-size: 27px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.7px;
+
+    margin: 7px 0 6px;
+}
+
+
+.welcome-section h1 span {
+    font-size: 21px;
+}
+
+
+.welcome-section p {
+    color: #a5afc2;
+
+    font-size: 10px;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   DATE BOX
+   ========================================================= */
+
+.date-box {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 12px 16px;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+
+.date-box > i {
+    color: #818cf8;
+
+    font-size: 18px;
+}
+
+
+.date-box small {
+    display: block;
+
+    color: #8995ad;
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+
+.date-box strong {
+    display: block;
+
+    color: #dce3ef;
+
+    font-size: 9px;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   STATISTICS GRID
+   ========================================================= */
+
+.stats-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+}
+
+
+/* =========================================================
+   STAT CARD
+   ========================================================= */
+
+.stat-card {
+    background: #11172a;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 13px;
+
+    padding: 18px;
+
+    min-height: 170px;
+
+    transition: 0.2s;
+}
+
+
+.stat-card:hover {
+    border-color: rgba(129, 140, 248, 0.25);
+
+    transform: translateY(-2px);
+}
+
+
+.stat-card-top {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+
+/* =========================================================
+   STAT ICONS
+   ========================================================= */
+
+.stat-icon {
+    width: 39px;
+    height: 39px;
+
+    border-radius: 10px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}
+
+
+.stat-icon.blue {
+    background: rgba(59, 130, 246, 0.11);
+
+    color: #60a5fa;
+}
+
+
+.stat-icon.purple {
+    background: rgba(139, 92, 246, 0.11);
+
+    color: #a78bfa;
+}
+
+
+.stat-icon.orange {
+    background: rgba(249, 115, 22, 0.11);
+
+    color: #fb923c;
+}
+
+
+.stat-icon.green {
+    background: rgba(34, 197, 94, 0.10);
+
+    color: #4ade80;
+}
+
+
+/* =========================================================
+   STAT STATUS
+   ========================================================= */
+
+.stat-status {
+    font-size: 7px;
+
+    padding: 5px 7px;
+
+    border-radius: 5px;
+
+    font-weight: 600;
+}
+
+
+.stat-status.good {
+    color: #4ade80;
+
+    background: rgba(34, 197, 94, 0.08);
+}
+
+
+.stat-status.excellent {
+    color: #a78bfa;
+
+    background: rgba(139, 92, 246, 0.08);
+}
+
+
+.stat-status.upcoming {
+    color: #fb923c;
+
+    background: rgba(249, 115, 22, 0.08);
+}
+
+
+.stat-status.new {
+    color: #60a5fa;
+
+    background: rgba(59, 130, 246, 0.08);
+}
+
+
+/* =========================================================
+   STAT INFORMATION
+   ========================================================= */
+
+.stat-info > span {
+    display: block;
+
+    color: #93a0b8;
+
+    font-size: 8px;
+
+    margin-bottom: 5px;
+}
+
+
+.stat-info strong {
+    display: block;
+
+    color: #f8fafc;
+
+    font-size: 23px;
+
+    font-weight: 700;
+
+    letter-spacing: -0.5px;
+}
+
+
+.stat-info small {
+    display: block;
+
+    color: #8290a8;
+
+    font-size: 7px;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+
+.progress {
+    height: 4px;
+
+    margin-top: 15px;
+
+    background: #1b2237;
+
+    border-radius: 5px;
+
+    overflow: hidden;
+}
+
+
+.progress-bar {
+    height: 100%;
+
+    border-radius: 5px;
+}
+
+
+.blue-progress {
+    background: #6366f1;
+}
+
+
+.cgpa-bar {
+    height: 4px;
+
+    background: #1b2237;
+
+    border-radius: 5px;
+
+    margin-top: 15px;
+
+    overflow: hidden;
+}
+
+
+.cgpa-bar div {
+    height: 100%;
+
+    border-radius: 5px;
+
+    background: #8b5cf6;
+}
+
+
+/* =========================================================
+   SMALL STAT INFORMATION
+   ========================================================= */
+
+.exam-mini,
+.notification-mini {
+    margin-top: 13px;
+
+    padding: 7px 9px;
+
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    color: #8f9bb1;
+
+    font-size: 7px;
+}
+
+
+.exam-mini i {
+    color: #fb923c;
+
+    margin-right: 4px;
+}
+
+
+.notification-mini i {
+    color: #60a5fa;
+
+    margin-right: 4px;
+}
+
+
+/* =========================================================
+   MAIN DASHBOARD GRID
+   ========================================================= */
+
+.dashboard-grid {
+    display: grid;
+
+    grid-template-columns: 1.1fr 0.9fr;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+}
+
+
+.lower-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+}
+
+
+/* =========================================================
+   DASHBOARD CARD
+   ========================================================= */
+
+.dashboard-card {
+    background: #11172a;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 13px;
+
+    padding: 20px;
+}
+
+
+/* =========================================================
+   CARD HEADER
+   ========================================================= */
+
+.card-header {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+}
+
+
+.card-label {
+    display: block;
+
+    color: #7f8daa;
+
+    font-size: 7px;
+
+    letter-spacing: 1.2px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+
+.card-header h3 {
+    color: #f1f5f9;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    margin: 0;
+}
+
+
+.card-header a {
+    color: #8f9cff;
+
+    text-decoration: none;
+
+    font-size: 7px;
+
+    margin-top: 7px;
+}
+
+
+.card-header a:hover {
+    color: #b0b8ff;
+}
+
+
+.card-header a i {
+    margin-left: 3px;
+}
+
+
+/* =========================================================
+   ATTENDANCE
+   ========================================================= */
+
+.attendance-content {
+    display: flex;
+
+    align-items: center;
+
+    gap: 30px;
+}
+
+
+.attendance-circle {
+    width: 145px;
+    height: 145px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background:
+        conic-gradient(
+            #6366f1 86.4%,
+            #20273b 86.4%
+        );
+
+    position: relative;
+}
+
+
+.attendance-circle::before {
+    content: "";
+
+    position: absolute;
+
+    width: 112px;
+    height: 112px;
+
+    border-radius: 50%;
+
+    background: #11172a;
+}
+
+
+.attendance-circle div {
+    position: relative;
+
+    text-align: center;
+}
+
+
+.attendance-circle strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 22px;
+
+    font-weight: 700;
+}
+
+
+.attendance-circle span {
+    color: #8d99b0;
+
+    font-size: 7px;
+}
+
+
+.attendance-details {
+    flex: 1;
+}
+
+
+.attendance-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 9px 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+
+.attendance-item:last-child {
+    border-bottom: none;
+}
+
+
+.subject-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    flex-shrink: 0;
+}
+
+
+.blue-dot {
+    background: #60a5fa;
+}
+
+
+.purple-dot {
+    background: #a78bfa;
+}
+
+
+.green-dot {
+    background: #4ade80;
+}
+
+
+.orange-dot {
+    background: #fb923c;
+}
+
+
+.attendance-item div {
+    flex: 1;
+}
+
+
+.attendance-item strong {
+    display: block;
+
+    color: #d5dbe7;
+
+    font-size: 8px;
+}
+
+
+.attendance-item small {
+    display: block;
+
+    color: #7d899f;
+
+    font-size: 6px;
+
+    margin-top: 3px;
+}
+
+
+.attendance-item b {
+    color: #d6dce8;
+
+    font-size: 8px;
+}
+
+
+.warning-item b {
+    color: #fb923c;
+}
+
+
+/* =========================================================
+   TIMETABLE
+   ========================================================= */
+
+.timetable-list {
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.class-item {
+    display: flex;
+
+    align-items: center;
+
+    min-height: 61px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+
+    gap: 12px;
+}
+
+
+.class-item:last-child {
+    border-bottom: none;
+}
+
+
+.class-time {
+    width: 53px;
+
+    flex-shrink: 0;
+
+    text-align: right;
+}
+
+
+.class-time strong {
+    display: block;
+
+    color: #d7deea;
+
+    font-size: 8px;
+}
+
+
+.class-time span {
+    display: block;
+
+    color: #7e8ba2;
+
+    font-size: 6px;
+
+    margin-top: 3px;
+}
+
+
+.class-line {
+    width: 12px;
+
+    height: 40px;
+
+    border-left: 1px solid #293147;
+
+    position: relative;
+}
+
+
+.class-line span {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #444e69;
+
+    position: absolute;
+
+    left: -4px;
+
+    top: 16px;
+}
+
+
+.active-class .class-line {
+    border-color: #6366f1;
+}
+
+
+.active-class .class-line span {
+    background: #6366f1;
+
+    box-shadow:
+        0 0 8px rgba(99, 102, 241, 0.7);
+}
+
+
+.class-details {
+    flex: 1;
+}
+
+
+.class-details strong {
+    display: block;
+
+    color: #d9dfea;
+
+    font-size: 8px;
+}
+
+
+.class-details small {
+    display: block;
+
+    color: #7e8ba2;
+
+    font-size: 6px;
+
+    margin-top: 4px;
+}
+
+
+.class-badge {
+    color: #a5b4fc;
+
+    background: rgba(99, 102, 241, 0.10);
+
+    padding: 5px 7px;
+
+    border-radius: 5px;
+
+    font-size: 6px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   EXAMS
+   ========================================================= */
+
+.exam-list {
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.exam-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 11px 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+
+.exam-item:last-child {
+    border-bottom: none;
+}
+
+
+.exam-date {
+    width: 39px;
+    height: 43px;
+
+    border-radius: 8px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(99, 102, 241, 0.10);
+
+    color: #818cf8;
+
+    flex-shrink: 0;
+}
+
+
+.exam-date strong {
+    font-size: 13px;
+
+    line-height: 1;
+}
+
+
+.exam-date span {
+    font-size: 6px;
+
+    margin-top: 4px;
+
+    font-weight: 700;
+}
+
+
+.purple-date {
+    color: #a78bfa;
+
+    background: rgba(139, 92, 246, 0.10);
+}
+
+
+.green-date {
+    color: #4ade80;
+
+    background: rgba(34, 197, 94, 0.08);
+}
+
+
+.exam-details {
+    flex: 1;
+}
+
+
+.exam-details strong {
+    display: block;
+
+    color: #d7deea;
+
+    font-size: 8px;
+}
+
+
+.exam-details small {
+    display: block;
+
+    color: #8290a7;
+
+    font-size: 6px;
+
+    margin-top: 4px;
+}
+
+
+.exam-tag {
+    color: #8b97ae;
+
+    font-size: 6px;
+}
+
+
+/* =========================================================
+   NOTIFICATIONS
+   ========================================================= */
+
+.notification-list {
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.notification-item {
+    display: flex;
+
+    gap: 11px;
+
+    padding: 10px 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.045);
+}
+
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+
+.notification-icon {
+    width: 32px;
+    height: 32px;
+
+    border-radius: 8px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    font-size: 13px;
+}
+
+
+.notification-icon.blue {
+    background: rgba(59, 130, 246, 0.10);
+
+    color: #60a5fa;
+}
+
+
+.notification-icon.purple {
+    background: rgba(139, 92, 246, 0.10);
+
+    color: #a78bfa;
+}
+
+
+.notification-icon.orange {
+    background: rgba(249, 115, 22, 0.10);
+
+    color: #fb923c;
+}
+
+
+.notification-item div:last-child {
+    flex: 1;
+}
+
+
+.notification-item strong {
+    display: block;
+
+    color: #dce2ec;
+
+    font-size: 8px;
+}
+
+
+.notification-item small {
+    display: block;
+
+    color: #8793aa;
+
+    font-size: 6px;
+
+    line-height: 1.5;
+
+    margin-top: 3px;
+}
+
+
+.notification-item span {
+    display: block;
+
+    color: #69768e;
+
+    font-size: 6px;
+
+    margin-top: 4px;
+}
+
+
+/* =========================================================
+   ATTENDANCE ALERT
+   ========================================================= */
+
+.attendance-alert {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 15px 18px;
+
+    border-radius: 12px;
+
+    background: rgba(249, 115, 22, 0.055);
+
+    border: 1px solid rgba(249, 115, 22, 0.13);
+}
+
+
+.alert-icon {
+    width: 35px;
+    height: 35px;
+
+    border-radius: 9px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(249, 115, 22, 0.10);
+
+    color: #fb923c;
+
+    flex-shrink: 0;
+}
+
+
+.attendance-alert div:nth-child(2) {
+    flex: 1;
+}
+
+
+.attendance-alert strong {
+    display: block;
+
+    color: #f0f3f8;
+
+    font-size: 9px;
+}
+
+
+.attendance-alert p {
+    color: #929db2;
+
+    font-size: 7px;
+
+    margin: 4px 0 0;
+
+    line-height: 1.5;
+}
+
+
+.attendance-alert > a {
+    color: #fb923c;
+
+    font-size: 7px;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+}
+
+
+.attendance-alert > a i {
+    margin-left: 4px;
+}
+
+
+/* =========================================================
+   MOBILE SIDEBAR
+   ========================================================= */
+
+.sidebar-overlay {
+    display: none;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .stats-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE / SMALL SCREEN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        transform: translateX(-100%);
+
+        transition: 0.3s;
+    }
+
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+
+    .main-content {
+        margin-left: 0;
+    }
+
+
+    .mobile-menu {
+        display: block;
+    }
+
+
+    .sidebar-overlay.show {
+        display: block;
+
+        position: fixed;
+
+        inset: 0;
+
+        background: rgba(0, 0, 0, 0.6);
+
+        z-index: 900;
+    }
+
+
+    .page-location {
+        display: none;
+    }
+
+
+    .topbar {
+        padding: 0 20px;
+    }
+
+
+    .dashboard-container {
+        padding: 25px 20px;
+    }
+
+
+    .lower-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .welcome-section {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+
+    .topbar-user > div:not(.topbar-avatar),
+    .topbar-user > i {
+        display: none;
+    }
+
+
+    .attendance-content {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    .attendance-circle {
+        margin: 0 auto;
+    }
+
+
+    .attendance-details {
+        width: 100%;
+    }
+
+
+    .attendance-alert {
+        align-items: flex-start;
+
+        flex-wrap: wrap;
+    }
+
+
+    .attendance-alert > a {
+        margin-left: 48px;
+    }
+
+}
+/* ==========================================
+   CGPA CARD - ALIGNMENT FIX
+========================================== */
+
+.cgpa-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 170px;
+    padding: 18px;
+    background: #11172a;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 13px;
+    transition: all 0.3s ease;
+}
+
+.cgpa-card:hover {
+    border-color: rgba(139, 92, 246, 0.35);
+    transform: translateY(-2px);
+}
+
+/* Icon and badge */
+.cgpa-card .stat-card-top {
+    margin-bottom: 18px;
+}
+
+/* CGPA information */
+.cgpa-card .stat-info {
+    margin-top: 0;
+}
+
+.cgpa-card .stat-info > span {
+    margin-bottom: 5px;
+}
+
+.cgpa-card .stat-info strong {
+    font-size: 23px;
+    line-height: 1.3;
+    color: #ffffff;
+}
+
+.cgpa-card .stat-info small {
+    margin-top: 5px;
+}
+
+/* CGPA progress bar */
+.cgpa-card .cgpa-bar {
+    height: 4px;
+    width: 100%;
+    margin-top: 15px;
+    background: #1b2237;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.cgpa-card .cgpa-bar div {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #a78bfa);
+    border-radius: 5px;
+}

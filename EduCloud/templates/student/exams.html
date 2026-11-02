@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exams | EduCloud</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/exams.css') }}" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: #080d1c;
+            color: #f5f7ff;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 345px;
+            min-width: 345px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #0e1529;
+            border-right: 1px solid #202b45;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 20px 18px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 17px;
+            padding: 4px 15px 28px;
+            border-bottom: 1px solid #202b45;
+            flex-shrink: 0;
+        }
+
+        .brand-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 19px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #7960ff, #4935d9);
+            color: white;
+            font-size: 30px;
+        }
+
+        .brand-text h2 {
+            font-size: 25px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .brand-text span {
+            color: #91a6ca;
+            font-size: 14px;
+            display: block;
+            margin-top: 7px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px 0;
+            scrollbar-width: thin;
+            scrollbar-color: #65718e transparent;
+        }
+
+        .menu-section {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 18px;
+        }
+
+        .menu-title {
+            color: #8294b3;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            padding: 10px 17px 14px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-height: 55px;
+            width: 100%;
+            padding: 0 20px;
+            border-radius: 12px;
+            color: #aab7ce;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-item i {
+            width: 22px;
+            font-size: 21px;
+            color: #8da5cc;
+            flex-shrink: 0;
+        }
+
+        .nav-item:hover {
+            background: #171f3b;
+            color: white;
+        }
+
+        .nav-item.active {
+            background: #1c2148;
+            color: white;
+            border-left: 2px solid #8068ff;
+            font-weight: 700;
+        }
+
+        .nav-item.active i {
+            color: #8b78ff;
+        }
+
+        .notification-count {
+            margin-left: auto;
+            background: #6558ed;
+            color: white;
+            border-radius: 20px;
+            padding: 4px 9px;
+            font-size: 11px;
+        }
+
+        .account-section {
+            padding-top: 12px;
+            border-top: 1px solid #202b45;
+            margin-bottom: 12px;
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px;
+            background: #171f35;
+            border-radius: 14px;
+            flex-shrink: 0;
+        }
+
+        .user-avatar-small {
+            width: 43px;
+            height: 43px;
+            border-radius: 50%;
+            background: #292e69;
+            color: #a9b8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .sidebar-user-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .sidebar-user-info strong {
+            font-size: 12px;
+            color: white;
+        }
+
+        .sidebar-user-info span {
+            font-size: 10px;
+            color: #8294b3;
+            margin-top: 5px;
+        }
+
+        .sidebar-user > i {
+            margin-left: auto;
+            color: #8494b0;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 345px;
+            width: calc(100% - 345px);
+            min-width: 0;
+        }
+
+        .mobile-menu-button {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 290px;
+                min-width: 290px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .mobile-menu-button {
+                display: flex;
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 1100;
+                border: none;
+                border-radius: 9px;
+                padding: 9px 13px;
+                background: #6558ed;
+                color: white;
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <aside class="sidebar" id="sidebar">
+
+        <!-- BRAND -->
+        <div class="brand-section">
+            <div class="brand-icon">
+                <i class="bi bi-cloud-check"></i>
+            </div>
+
+            <div class="brand-text">
+                <h2>EduCloud</h2>
+                <span>Academic Portal</span>
+            </div>
+        </div>
+
+        <!-- SCROLLABLE SIDEBAR MENU -->
+        <div class="sidebar-nav">
+
+            <!-- MAIN MENU -->
+            <div class="menu-section">
+
+                <div class="menu-title">MAIN MENU</div>
+
+                <a href="/student/dashboard"
+                   class="nav-item {% if request.path == '/student/dashboard' %}active{% endif %}">
+                    <i class="bi bi-grid-1x2"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <a href="/student/profile"
+                   class="nav-item {% if request.path == '/student/profile' %}active{% endif %}">
+                    <i class="bi bi-person"></i>
+                    <span>Profile</span>
+                </a>
+
+                <a href="/student/attendance"
+                   class="nav-item {% if request.path == '/student/attendance' %}active{% endif %}">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Attendance</span>
+                </a>
+
+                <a href="/student/timetable"
+                   class="nav-item {% if request.path == '/student/timetable' %}active{% endif %}">
+                    <i class="bi bi-clock"></i>
+                    <span>Timetable</span>
+                </a>
+
+                <a href="/student/marks"
+                   class="nav-item {% if request.path == '/student/marks' %}active{% endif %}">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Marks &amp; CGPA</span>
+                </a>
+
+                <a href="/student/exams"
+                   class="nav-item {% if request.path == '/student/exams' %}active{% endif %}">
+                    <i class="bi bi-journal-text"></i>
+                    <span>Exams</span>
+                </a>
+
+                <a href="/student/hall-ticket"
+                   class="nav-item {% if request.path == '/student/hall-ticket' %}active{% endif %}">
+                    <i class="bi bi-ticket-perforated"></i>
+                    <span>Hall Ticket</span>
+                </a>
+
+            </div>
+
+            <!-- CAMPUS MENU -->
+            <div class="menu-section">
+
+                <div class="menu-title">CAMPUS</div>
+
+                <a href="/student/events"
+                   class="nav-item {% if request.path == '/student/events' %}active{% endif %}">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>Events</span>
+                </a>
+
+                <a href="/student/placements"
+                   class="nav-item {% if request.path == '/student/placements' %}active{% endif %}">
+                    <i class="bi bi-briefcase"></i>
+                    <span>Placements</span>
+                </a>
+
+                <a href="/student/hackathons"
+                   class="nav-item {% if request.path == '/student/hackathons' %}active{% endif %}">
+                    <i class="bi bi-trophy"></i>
+                    <span>Hackathons</span>
+                </a>
+
+                <a href="/student/venues"
+                   class="nav-item {% if request.path == '/student/venues' %}active{% endif %}">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>Venue Updates</span>
+                </a>
+
+                <a href="/student/notifications"
+                   class="nav-item {% if request.path == '/student/notifications' %}active{% endif %}">
+                    <i class="bi bi-bell"></i>
+                    <span>Notifications</span>
+
+                    {% if notification_count and notification_count > 0 %}
+                        <span class="notification-count">
+                            {{ notification_count }}
+                        </span>
+                    {% endif %}
+                </a>
+
+            </div>
+
+            <!-- ACCOUNT MENU -->
+            <div class="menu-section account-section">
+
+                <div class="menu-title">ACCOUNT</div>
+
+                <a href="/student/settings"
+                   class="nav-item {% if request.path == '/student/settings' %}active{% endif %}">
+                    <i class="bi bi-gear"></i>
+                    <span>Settings</span>
+                </a>
+
+                <a href="/logout" class="nav-item">
+                    <i class="bi bi-box-arrow-left"></i>
+                    <span>Logout</span>
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- STUDENT INFORMATION -->
+        <div class="sidebar-user">
+
+            <div class="user-avatar-small">
+                {{ student.name[:2]|upper }}
+            </div>
+
+            <div class="sidebar-user-info">
+                <strong>{{ student.name }}</strong>
+                <span>Student · {{ student.register_no }}</span>
+            </div>
+
+            <i class="bi bi-three-dots"></i>
+
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- KEEP YOUR EXISTING EXAM PAGE CONTENT HERE -->
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="breadcrumb-area">
+
+                <span>
+                    Student Portal
+                </span>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <strong>
+                    Exams
+                </strong>
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+                <button class="topbar-icon">
+
+                    <i class="bi bi-search"></i>
+
+                </button>
+
+
+                <button class="topbar-icon notification-button" type="button"
+                        aria-label="Notifications"
+                        onclick="window.location.href='/student/notifications'">
+
+                    <i class="bi bi-bell"></i>
+
+                    <span class="notification-dot"></span>
+
+                </button>
+
+
+                <div class="topbar-divider"></div>
+
+
+                <div class="topbar-user">
+
+                    <div class="topbar-avatar">
+
+                        {{ student.name[:2]|upper }}
+
+                    </div>
+
+
+                    <div class="topbar-user-info">
+
+                        <strong>
+                            {{ student.name }}
+                        </strong>
+
+                        <span>
+                            {{ student.department }} · {{ student.year }} Year
+                        </span>
+
+                    </div>
+
+                    <i class="bi bi-chevron-down"></i>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             PAGE CONTENT
+             ===================================================== -->
+
+        <div class="page-content">
+
+
+            <!-- PAGE HEADER -->
+
+            <section class="page-header">
+
+                <span class="page-label">
+                    EXAMINATION SCHEDULE
+                </span>
+
+                <h1>
+                    Exams
+                </h1>
+
+                <p>
+                    View upcoming examinations, dates, timings and examination venues.
+                </p>
+
+            </section>
+
+
+            <!-- =================================================
+                 EXAM SUMMARY
+                 ================================================= -->
+
+            <section class="exam-summary">
+
+
+                <!-- UPCOMING EXAMS -->
+
+                <div class="summary-card card-box">
+
+                    <div class="summary-icon purple">
+
+                        <i class="bi bi-calendar-event"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            UPCOMING EXAMS
+                        </span>
+
+                        <strong>
+                            {{ upcoming_count }}
+                        </strong>
+
+                        <small>
+                            Semester {{ student.semester }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NEXT EXAM -->
+
+                <div class="summary-card card-box">
+
+                    <div class="summary-icon blue">
+
+                        <i class="bi bi-clock"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            NEXT EXAM
+                        </span>
+
+                        {% if next_exam %}
+
+                            <strong>
+                                {{ next_exam.countdown }}
+                            </strong>
+
+                            <small>
+                                {{ next_exam.subject }}
+                            </small>
+
+                        {% else %}
+
+                            <strong>
+                                —
+                            </strong>
+
+                            <small>
+                                No upcoming exams
+                            </small>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- VENUES -->
+
+                <div class="summary-card card-box">
+
+                    <div class="summary-icon orange">
+
+                        <i class="bi bi-building"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            EXAM VENUES
+                        </span>
+
+                        <strong>
+                            {{ venue_count }}
+                        </strong>
+
+                        <small>
+                            Allocated rooms
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ELIGIBILITY -->
+
+                <div class="summary-card card-box">
+
+                    <div class="summary-icon green">
+
+                        {% if eligible %}
+
+                            <i class="bi bi-check-circle"></i>
+
+                        {% else %}
+
+                            <i class="bi bi-exclamation-circle"></i>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            ELIGIBILITY
+                        </span>
+
+                        {% if eligible %}
+
+                            <strong>
+                                Eligible
+                            </strong>
+
+                            <small>
+                                Attendance verified
+                            </small>
+
+                        {% else %}
+
+                            <strong>
+                                Not Eligible
+                            </strong>
+
+                            <small>
+                                Attendance below requirement
+                            </small>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 NEXT EXAM
+                 ================================================= -->
+
+            {% if next_exam %}
+
+            <section class="next-exam card-box">
+
+
+                <div class="next-exam-left">
+
+                    <div class="next-exam-icon">
+
+                        <i class="bi bi-alarm"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <span class="section-label">
+                            NEXT EXAMINATION
+                        </span>
+
+                        <h2>
+                            {{ next_exam.subject }}
+                        </h2>
+
+                        <p>
+                            {{ next_exam.course_code }}
+                            ·
+                            {{ next_exam.exam_type }} Examination
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="next-exam-date">
+
+                    <span>
+                        {{ next_exam.month }}
+                    </span>
+
+                    <strong>
+                        {{ next_exam.day }}
+                    </strong>
+
+                    <small>
+                        {{ next_exam.weekday|upper }}
+                    </small>
+
+                </div>
+
+
+                <div class="next-exam-time">
+
+                    <span>
+                        TIME
+                    </span>
+
+                    <strong>
+                        {{ next_exam.formatted_time }}
+                    </strong>
+
+                    <small>
+                        Examination
+                    </small>
+
+                </div>
+
+
+                <div class="next-exam-room">
+
+                    <span>
+                        VENUE
+                    </span>
+
+                    <strong>
+                        {{ next_exam.venue }}
+                    </strong>
+
+                    <small>
+                        {{ next_exam.class_name }}
+                    </small>
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 UPCOMING EXAMS
+                 ================================================= -->
+
+            <section class="exam-section">
+
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-label">
+                            UPCOMING
+                        </span>
+
+                        <h2>
+                            Examination Schedule
+                        </h2>
+
+                    </div>
+
+
+                    <div class="semester-badge">
+
+                        <i class="bi bi-calendar3"></i>
+
+                        Semester {{ student.semester }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="exam-table card-box">
+
+
+                    <!-- TABLE HEADER -->
+
+                    <div class="exam-table-header">
+
+                        <div>
+                            DATE
+                        </div>
+
+                        <div>
+                            SUBJECT
+                        </div>
+
+                        <div>
+                            TYPE
+                        </div>
+
+                        <div>
+                            TIME
+                        </div>
+
+                        <div>
+                            VENUE
+                        </div>
+
+                        <div>
+                            STATUS
+                        </div>
+
+                    </div>
+
+
+                    <!-- DYNAMIC EXAMS -->
+
+                    {% if upcoming_exams %}
+
+                        {% for exam in upcoming_exams %}
+
+                        <div class="exam-row">
+
+
+                            <!-- DATE -->
+
+                            <div class="exam-date">
+
+                                <strong>
+                                    {{ exam.day }}
+                                </strong>
+
+                                <span>
+                                    {{ exam.month }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- SUBJECT -->
+
+                            <div class="exam-subject">
+
+                                <div class="subject-icon
+                                    {% if loop.index % 5 == 0 %}
+                                        pink
+                                    {% elif loop.index % 4 == 0 %}
+                                        green
+                                    {% elif loop.index % 3 == 0 %}
+                                        orange
+                                    {% elif loop.index % 2 == 0 %}
+                                        blue
+                                    {% else %}
+                                        purple
+                                    {% endif %}
+                                ">
+
+                                    {% if exam.exam_type == "Practical" %}
+
+                                        <i class="bi bi-terminal"></i>
+
+                                    {% elif "Database" in exam.subject %}
+
+                                        <i class="bi bi-database"></i>
+
+                                    {% elif "Network" in exam.subject %}
+
+                                        <i class="bi bi-diagram-3"></i>
+
+                                    {% elif "Operating" in exam.subject %}
+
+                                        <i class="bi bi-cpu"></i>
+
+                                    {% else %}
+
+                                        <i class="bi bi-journal-text"></i>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        {{ exam.subject }}
+                                    </strong>
+
+                                    <span>
+                                        {{ exam.course_code }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- TYPE -->
+
+                            <div>
+
+                                {% if exam.exam_type == "Practical" %}
+
+                                    <span class="exam-type lab">
+                                        Practical
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="exam-type">
+                                        Theory
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- TIME -->
+
+                            <div class="exam-time">
+
+                                <strong>
+                                    {{ exam.formatted_time }}
+                                </strong>
+
+                                <span>
+                                    Examination
+                                </span>
+
+                            </div>
+
+
+                            <!-- VENUE -->
+
+                            <div>
+
+                                <span class="venue-badge">
+                                    {{ exam.venue }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- STATUS -->
+
+                            <div>
+
+                                {% if exam.status == "Upcoming" %}
+
+                                    <span class="status upcoming">
+                                        Upcoming
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="status completed">
+                                        Completed
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="exam-row">
+
+                            <div style="grid-column: 1 / -1; text-align:center; padding:40px;">
+
+                                <i
+                                    class="bi bi-calendar-x"
+                                    style="font-size:35px;"
+                                ></i>
+
+                                <p style="margin-top:15px;">
+                                    No upcoming examinations scheduled.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 COMPLETED EXAMS
+                 ================================================= -->
+
+            {% if completed_exams %}
+
+            <section class="exam-section">
+
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="section-label">
+                            COMPLETED
+                        </span>
+
+                        <h2>
+                            Previous Examinations
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="exam-table card-box">
+
+
+                    <div class="exam-table-header">
+
+                        <div>
+                            DATE
+                        </div>
+
+                        <div>
+                            SUBJECT
+                        </div>
+
+                        <div>
+                            TYPE
+                        </div>
+
+                        <div>
+                            TIME
+                        </div>
+
+                        <div>
+                            VENUE
+                        </div>
+
+                        <div>
+                            STATUS
+                        </div>
+
+                    </div>
+
+
+                    {% for exam in completed_exams %}
+
+                    <div class="exam-row">
+
+
+                        <div class="exam-date">
+
+                            <strong>
+                                {{ exam.day }}
+                            </strong>
+
+                            <span>
+                                {{ exam.month }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="exam-subject">
+
+                            <div class="subject-icon purple">
+
+                                <i class="bi bi-check2-circle"></i>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    {{ exam.subject }}
+                                </strong>
+
+                                <span>
+                                    {{ exam.course_code }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="exam-type">
+                                {{ exam.exam_type }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="exam-time">
+
+                            <strong>
+                                {{ exam.formatted_time }}
+                            </strong>
+
+                            <span>
+                                Examination
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="venue-badge">
+                                {{ exam.venue }}
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="status completed">
+                                Completed
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 EXAM INSTRUCTIONS
+                 ================================================= -->
+
+            <section class="bottom-grid">
+
+
+                <!-- INSTRUCTIONS -->
+
+                <div class="info-card card-box">
+
+
+                    <div class="info-header">
+
+                        <div class="info-icon blue">
+
+                            <i class="bi bi-info-circle"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span class="section-label">
+                                IMPORTANT
+                            </span>
+
+                            <h3>
+                                Examination Instructions
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <ul>
+
+                        <li>
+                            Report to the examination hall at least 15 minutes before the scheduled time.
+                        </li>
+
+                        <li>
+                            Carry your valid college identity card and hall ticket.
+                        </li>
+
+                        <li>
+                            Electronic devices are not permitted inside the examination hall.
+                        </li>
+
+                        <li>
+                            Check your examination venue before leaving for the exam.
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <!-- ELIGIBILITY -->
+
+                <div class="info-card card-box">
+
+
+                    <div class="info-header">
+
+                        <div class="info-icon green">
+
+                            {% if eligible %}
+
+                                <i class="bi bi-shield-check"></i>
+
+                            {% else %}
+
+                                <i class="bi bi-shield-exclamation"></i>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div>
+
+                            <span class="section-label">
+                                ELIGIBILITY
+                            </span>
+
+                            <h3>
+                                Examination Status
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="eligibility-status">
+
+                        <div class="eligibility-icon">
+
+                            {% if eligible %}
+
+                                <i class="bi bi-check-lg"></i>
+
+                            {% else %}
+
+                                <i class="bi bi-exclamation-lg"></i>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div>
+
+                            {% if eligible %}
+
+                                <strong>
+                                    Eligible for Examination
+                                </strong>
+
+                                <span>
+                                    Attendance requirement satisfied.
+                                </span>
+
+                            {% else %}
+
+                                <strong>
+                                    Not Eligible for Examination
+                                </strong>
+
+                                <span>
+                                    Attendance requirement is not satisfied.
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="eligibility-details">
+
+
+                        <div>
+
+                            <span>
+                                Attendance
+                            </span>
+
+                            <strong>
+                                {{ attendance_percentage }}%
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Required
+                            </span>
+
+                            <strong>
+                                {{ required_attendance }}%
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- LAST UPDATED -->
+
+            <div class="last-updated">
+
+                <i class="bi bi-arrow-clockwise"></i>
+
+                Last updated:
+
+                <strong>
+                    {{ last_updated }}
+                </strong>
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- MOBILE MENU -->
+
+<button
+    class="mobile-menu-button"
+    id="mobileMenuButton"
+>
+
+    <i class="bi bi-list"></i>
+
+</button>
+
+
+<script>
+
+    const mobileButton =
+        document.getElementById("mobileMenuButton");
+
+    const sidebar =
+        document.getElementById("sidebar");
+
+    if (mobileButton && sidebar) {
+
+        mobileButton.addEventListener(
+            "click",
+            function () {
+
+                sidebar.classList.toggle("show");
+
+            }
+        );
+
+    }
+
+</script>
+
+
+</body>
+
+</html>

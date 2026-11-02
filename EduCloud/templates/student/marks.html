@@ -1,0 +1,622 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marks & CGPA | EduCloud</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/marks.css') }}">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .mobile-menu-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            width: 48px;
+            height: 48px;
+            border: none;
+            border-radius: 12px;
+            background: #625bf6;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        @media (min-width: 768px) {
+            .mobile-menu-button {
+                display: none;
+            }
+        }
+
+        .marks-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .marks-filters select {
+            min-width: 190px;
+            max-width: 100%;
+        }
+
+        .marks-result-count {
+            margin: 8px 0 0;
+            font-size: 12px;
+            opacity: 0.75;
+        }
+
+        @media (max-width: 600px) {
+            .marks-filters {
+                flex-direction: column;
+            }
+
+            .marks-filters select {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="app-container">
+
+    <aside class="sidebar" id="sidebar">
+
+    <!-- BRAND -->
+    <div class="brand-section">
+        <div class="brand-icon">
+            <i class="bi bi-cloud-check"></i>
+        </div>
+
+        <div class="brand-text">
+            <h2>EduCloud</h2>
+            <span>Academic Portal</span>
+        </div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <!-- MAIN MENU -->
+    <div class="sidebar-nav">
+
+        <div class="menu-section">
+            <div class="menu-title">MAIN MENU</div>
+
+            <a href="/student/dashboard" class="nav-item">
+                <i class="bi bi-grid-1x2"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/student/profile" class="nav-item">
+                <i class="bi bi-person"></i>
+                <span>Profile</span>
+            </a>
+
+            <a href="/student/attendance" class="nav-item">
+                <i class="bi bi-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+
+            <a href="/student/timetable" class="nav-item">
+                <i class="bi bi-clock"></i>
+                <span>Timetable</span>
+            </a>
+
+            <a href="/student/marks" class="nav-item active">
+                <i class="bi bi-bar-chart"></i>
+                <span>Marks &amp; CGPA</span>
+            </a>
+
+            <a href="/student/exams" class="nav-item">
+                <i class="bi bi-journal-text"></i>
+                <span>Exams</span>
+            </a>
+
+            <a href="/student/hall-ticket" class="nav-item">
+                <i class="bi bi-ticket-perforated"></i>
+                <span>Hall Ticket</span>
+            </a>
+        </div>
+
+        <!-- CAMPUS -->
+        <div class="menu-section campus-section">
+
+            <div class="menu-title">CAMPUS</div>
+
+            <a href="/student/events" class="nav-item">
+                <i class="bi bi-calendar-event"></i>
+                <span>Events</span>
+            </a>
+
+            <a href="/student/placements" class="nav-item">
+                <i class="bi bi-briefcase"></i>
+                <span>Placements</span>
+            </a>
+
+            <a href="/student/hackathons" class="nav-item">
+                <i class="bi bi-trophy"></i>
+                <span>Hackathons</span>
+            </a>
+
+            <a href="/student/venues" class="nav-item">
+                <i class="bi bi-geo-alt"></i>
+                <span>Venue Updates</span>
+            </a>
+
+            <a href="/student/notifications" class="nav-item">
+                <i class="bi bi-bell"></i>
+                <span>Notifications</span>
+                <span class="notification-count">11</span>
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="sidebar-account">
+
+        <div class="menu-title">ACCOUNT</div>
+
+        <a href="/student/settings" class="nav-item">
+            <i class="bi bi-gear"></i>
+            <span>Settings</span>
+        </a>
+
+        <a href="/logout" class="nav-item">
+            <i class="bi bi-box-arrow-left"></i>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+    <!-- STUDENT CARD -->
+    <div class="sidebar-user">
+
+        <div class="user-avatar-small">
+            {{ student.name[:2].upper() }}
+        </div>
+
+        <div class="sidebar-user-info">
+            <strong>{{ student.name }}</strong>
+            <span>Student · {{ student.register_no }}</span>
+        </div>
+
+        <i class="bi bi-three-dots"></i>
+
+    </div>
+
+</aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="breadcrumb-area">
+                <span>Student Portal</span>
+                <i class="bi bi-chevron-right"></i>
+                <strong>Marks &amp; CGPA</strong>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="topbar-icon" type="button" aria-label="Search">
+                    <i class="bi bi-search"></i>
+                </button>
+
+                <button class="topbar-icon notification-button"
+                        type="button"
+                        aria-label="Notifications"
+                        onclick="window.location.href='/student/notifications'">
+                    <i class="bi bi-bell"></i>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <div class="topbar-divider"></div>
+
+                <div class="topbar-user">
+                    <div class="topbar-avatar">
+                        {{ student.name[:2].upper() }}
+                    </div>
+                    <div class="topbar-user-info">
+                        <strong>{{ student.name }}</strong>
+                        <span>{{ student.department }} · {{ student.year }} Year</span>
+                    </div>
+                    <i class="bi bi-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+
+            <section class="page-header">
+                <span class="page-label">ACADEMIC PERFORMANCE</span>
+                <h1>Marks &amp; CGPA</h1>
+                <p>View your semester performance, grades and cumulative academic progress.</p>
+            </section>
+
+            <section class="performance-grid">
+
+                <div class="performance-card cgpa-card">
+                    <div class="performance-top">
+                        <div class="performance-icon purple">
+                            <i class="bi bi-trophy"></i>
+                        </div>
+                        <span class="performance-label">OVERALL CGPA</span>
+                    </div>
+
+                    <div class="performance-value">{{ "%.2f"|format(cgpa|default(0)|float) }}</div>
+
+                    <div class="performance-footer">
+                        <span>Out of 10.00</span>
+                        <span class="positive">
+                            <i class="bi bi-arrow-up"></i>
+                            {% if backlogs == 0 %}
+                                Good Standing
+                            {% else %}
+                                Attention Required
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="performance-card">
+                    <div class="performance-top">
+                        <div class="performance-icon blue">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <span class="performance-label">
+                            SEMESTER {{ student.semester }} SGPA
+                        </span>
+                    </div>
+
+                    <div class="performance-value">{{ sgpa }}</div>
+
+                    <div class="performance-footer">
+                        <span>Current semester</span>
+                        <span class="positive">{{ sgpa_change }}</span>
+                    </div>
+                </div>
+
+                <div class="performance-card">
+                    <div class="performance-top">
+                        <div class="performance-icon green">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <span class="performance-label">CREDITS EARNED</span>
+                    </div>
+
+                    <div class="performance-value">{{ credits_earned }}</div>
+
+                    <div class="performance-footer">
+                        <span>Out of {{ credits_total }}</span>
+                        <span class="positive">{{ credit_percentage }}%</span>
+                    </div>
+                </div>
+
+                <div class="performance-card">
+                    <div class="performance-top">
+                        <div class="performance-icon orange">
+                            <i class="bi bi-exclamation-circle"></i>
+                        </div>
+                        <span class="performance-label">BACKLOGS</span>
+                    </div>
+
+                    <div class="performance-value">{{ backlogs }}</div>
+
+                    <div class="performance-footer">
+                        <span>Current status</span>
+                        <span class="positive">
+                            {% if backlogs == 0 %}Clear{% else %}Pending{% endif %}
+                        </span>
+                    </div>
+                </div>
+
+            </section>
+
+            <section class="marks-section">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-label">SEMESTER PERFORMANCE</span>
+                        <h2 id="semesterHeading">Semester {{ student.semester }} Marks</h2>
+
+                        <div class="marks-filters">
+                            <select id="semesterFilter" class="exam-filter" aria-label="Filter marks by semester">
+                                <option value="All">All Semesters</option>
+                                {% for sem in range(1, 9) %}
+                                <option value="{{ sem }}"
+                                    {% if sem == student.semester %}selected{% endif %}>
+                                    Semester {{ sem }}
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                            <select id="examFilter" class="exam-filter" aria-label="Filter marks by assessment">
+                                <option value="All">All Assessments</option>
+                                <option value="Internal">Internal</option>
+                                <option value="External">External</option>
+                                <option value="Internal Assessment 1">Internal Assessment 1</option>
+                                <option value="Internal Assessment 2">Internal Assessment 2</option>
+                                <option value="Model Examination">Model Examination</option>
+                                <option value="End Semester Examination">End Semester Examination</option>
+                            </select>
+                        </div>
+                        <p id="marksResultCount" class="marks-result-count" aria-live="polite"></p>
+                    </div>
+
+                    <div class="semester-badge">
+                        <i class="bi bi-calendar3"></i>
+                        {{ academic_year }}
+                    </div>
+                </div>
+
+                <div class="marks-table-card card-box">
+                    <div class="marks-table-header">
+                        <div>Subject</div>
+                        <div>Internal</div>
+                        <div>External</div>
+                        <div>Total</div>
+                        <div>Grade</div>
+                        <div>Grade Point</div>
+                        <div>Credits</div>
+                    </div>
+
+                    {% for record in marks_records %}
+                    <div class="marks-row"
+                         data-semester="{{ record.semester if record.semester is not none else '' }}"
+                         data-exam-type="{{ record.exam_type }}">
+                        <div class="subject-name">
+                            <div class="subject-icon purple">
+                                <i class="bi bi-book"></i>
+                            </div>
+                            <div>
+                                <strong>{{ record.subject }}</strong>
+<span>{{ record.course_code or '' }}</span>
+<small class="exam-type-label">
+    {{ record.exam_type }}
+</small>
+                            </div>
+                        </div>
+
+                        <div>{{ record.internal_marks }}</div>
+                        <div>{{ record.external_marks }}</div>
+                        <div class="total-mark">{{ record.total_marks }}</div>
+
+                        <div>
+                            <span class="grade
+                                {% if record.grade == 'O' %}grade-o
+                                {% elif record.grade == 'A+' %}grade-a-plus
+                                {% elif record.grade == 'A' %}grade-a
+                                {% else %}grade-b{% endif %}">
+                                {{ record.grade }}
+                            </span>
+                        </div>
+
+                        <div class="grade-point">{{ record.grade_point }}</div>
+                        <div>{{ record.credits }}</div>
+                    </div>
+                    {% else %}
+                    <div class="marks-row">
+                        <div class="subject-name">
+                            <div class="subject-icon purple">
+                                <i class="bi bi-info-circle"></i>
+                            </div>
+                            <div>
+                                <strong>No marks available</strong>
+                                <span>Marks have not been entered yet</span>
+                            </div>
+                        </div>
+                        <div>0</div>
+                        <div>0</div>
+                        <div class="total-mark">0</div>
+                        <div><span class="grade grade-b">N/A</span></div>
+                        <div class="grade-point">0</div>
+                        <div>0</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <section class="bottom-grid">
+
+                <div class="performance-summary card-box">
+                    <div class="summary-header">
+                        <div>
+                            <span class="section-label">PERFORMANCE</span>
+                            <h3>Semester Progress</h3>
+                        </div>
+                        <i class="bi bi-bar-chart-line"></i>
+                    </div>
+
+                    <div class="semester-progress">
+                        {% for semester_number, semester_sgpa in [
+                            (1, 8.10), (2, 8.32), (3, 8.28), (4, 8.45)
+                        ] %}
+                        <div class="progress-item">
+                            <div>
+                                <span>Semester {{ semester_number }}</span>
+                                <strong>{{ semester_sgpa }}</strong>
+                            </div>
+                            <div class="progress-track">
+                                <span data-width="{{ semester_sgpa * 10 }}"></span>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        <div class="progress-item">
+                            <div>
+                                <span>Semester {{ student.semester }}</span>
+                                <strong>{{ sgpa }}</strong>
+                            </div>
+                            <div class="progress-track current">
+                                <span data-width="{{ sgpa * 10 }}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grade-scale card-box">
+                    <div class="summary-header">
+                        <div>
+                            <span class="section-label">GRADING</span>
+                            <h3>Grade Scale</h3>
+                        </div>
+                        <i class="bi bi-award"></i>
+                    </div>
+
+                    <div class="grade-list">
+                        <div class="grade-item">
+                            <span class="grade grade-o">O</span>
+                            <div>
+                                <strong>Outstanding</strong>
+                                <small>10 Grade Point</small>
+                            </div>
+                        </div>
+
+                        <div class="grade-item">
+                            <span class="grade grade-a-plus">A+</span>
+                            <div>
+                                <strong>Excellent</strong>
+                                <small>9.0 Grade Point</small>
+                            </div>
+                        </div>
+
+                        <div class="grade-item">
+                            <span class="grade grade-a">A</span>
+                            <div>
+                                <strong>Very Good</strong>
+                                <small>8.0 Grade Point</small>
+                            </div>
+                        </div>
+
+                        <div class="grade-item">
+                            <span class="grade grade-b">B+</span>
+                            <div>
+                                <strong>Good</strong>
+                                <small>7.0 Grade Point</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <div class="academic-status">
+                <div class="status-icon">
+                    {% if backlogs == 0 %}
+                        <i class="bi bi-check-circle-fill"></i>
+                    {% else %}
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <strong>
+                        Academic Status:
+                        {% if backlogs == 0 %}
+                            Good Standing
+                        {% else %}
+                            Attention Required
+                        {% endif %}
+                    </strong>
+
+                    <span>
+                        {% if backlogs == 0 %}
+                            You have no active backlogs and your current CGPA is above the academic requirement.
+                        {% else %}
+                            You have {{ backlogs }} active backlog(s). Please review your academic performance.
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+
+            <div class="last-updated">
+                <i class="bi bi-arrow-clockwise"></i>
+                Last updated:
+                <strong>Data loaded from EduCloud database</strong>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<button class="mobile-menu-button" id="mobileMenuButton"
+        type="button" aria-label="Open menu">
+    <i class="bi bi-list"></i>
+</button>
+
+<script>
+const mobileButton = document.getElementById("mobileMenuButton");
+const sidebar = document.getElementById("sidebar");
+
+if (mobileButton && sidebar) {
+    mobileButton.addEventListener("click", function () {
+        sidebar.classList.toggle("show");
+    });
+}
+
+document.querySelectorAll("[data-width]").forEach(function (element) {
+    const width = Number(element.getAttribute("data-width")) || 0;
+    element.style.width = Math.max(0, Math.min(width, 100)) + "%";
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const semesterFilter = document.getElementById("semesterFilter");
+    const examFilter = document.getElementById("examFilter");
+    const semesterHeading = document.getElementById("semesterHeading");
+    const resultCount = document.getElementById("marksResultCount");
+
+    if (!semesterFilter || !examFilter) return;
+
+    function filterMarks() {
+        const selectedSemester = semesterFilter.value;
+        const selectedExam = examFilter.value;
+        let visibleCount = 0;
+
+        document.querySelectorAll(".marks-row[data-exam-type]").forEach(function (row) {
+            const rowSemester = (row.dataset.semester || "").trim();
+            const rowExam = (row.dataset.examType || "").trim();
+
+            const semesterMatches =
+                selectedSemester === "All" ||
+                rowSemester === selectedSemester;
+
+            const examMatches =
+                selectedExam === "All" ||
+                rowExam === selectedExam;
+
+            const visible = semesterMatches && examMatches;
+            row.style.display = visible ? "" : "none";
+
+            if (visible) visibleCount++;
+        });
+
+        if (semesterHeading) {
+            semesterHeading.textContent = selectedSemester === "All"
+                ? "All Semester Marks"
+                : `Semester ${selectedSemester} Marks`;
+        }
+
+        if (resultCount) {
+            resultCount.textContent =
+                `${visibleCount} assessment record${visibleCount === 1 ? "" : "s"}`;
+        }
+    }
+
+    semesterFilter.addEventListener("change", filterMarks);
+    examFilter.addEventListener("change", filterMarks);
+    filterMarks();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Placements | EduCloud</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/placements.css') }}">
+
+</head>
+
+
+<body>
+
+<div class="app-container">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand-section">
+
+            <div class="brand-icon">
+                <i class="bi bi-cloud-check"></i>
+            </div>
+
+            <div class="brand-text">
+                <h2>EduCloud</h2>
+                <span>Academic Portal</span>
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-divider"></div>
+
+
+        <div class="menu-section">
+
+            <div class="menu-title">
+                MAIN MENU
+            </div>
+
+
+            <a href="/student/dashboard" class="nav-item">
+                <i class="bi bi-grid-1x2"></i>
+                <span>Dashboard</span>
+            </a>
+
+
+            <a href="/student/profile" class="nav-item">
+                <i class="bi bi-person"></i>
+                <span>Profile</span>
+            </a>
+
+
+            <a href="/student/attendance" class="nav-item">
+                <i class="bi bi-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+
+
+            <a href="/student/timetable" class="nav-item">
+                <i class="bi bi-clock"></i>
+                <span>Timetable</span>
+            </a>
+
+
+            <a href="/student/marks" class="nav-item">
+                <i class="bi bi-bar-chart"></i>
+                <span>Marks &amp; CGPA</span>
+            </a>
+
+
+            <a href="/student/exams" class="nav-item">
+                <i class="bi bi-journal-text"></i>
+                <span>Exams</span>
+            </a>
+
+
+            <a href="/student/hall-ticket" class="nav-item">
+                <i class="bi bi-ticket-perforated"></i>
+                <span>Hall Ticket</span>
+            </a>
+
+        </div>
+
+
+        <div class="menu-section campus-section">
+
+            <div class="menu-title">
+                CAMPUS
+            </div>
+
+
+            <a href="/student/events" class="nav-item">
+                <i class="bi bi-calendar-event"></i>
+                <span>Events</span>
+            </a>
+
+
+            <a href="/student/placements" class="nav-item active">
+                <i class="bi bi-briefcase"></i>
+                <span>Placements</span>
+            </a>
+
+
+            <a href="#" class="nav-item">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a>
+
+
+            <a href="/logout" class="nav-item">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+
+        <div class="sidebar-user">
+
+            <div class="user-avatar-small">
+                JK
+            </div>
+
+            <div class="sidebar-user-info">
+
+                <strong>
+                    {{ student.name }}
+                </strong>
+
+                <span>
+                    Student · {{ student.register_no }}
+                </span>
+
+            </div>
+
+            <i class="bi bi-three-dots"></i>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="breadcrumb-area">
+
+                <span>
+                    Student Portal
+                </span>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <strong>
+                    Placements
+                </strong>
+
+            </div>
+
+
+            <div class="topbar-actions">
+
+                <button class="topbar-icon">
+                    <i class="bi bi-search"></i>
+                </button>
+
+
+                <button class="topbar-icon notification-button" type="button"
+                        aria-label="Notifications"
+                        onclick="window.location.href='/student/notifications'">
+
+                    <i class="bi bi-bell"></i>
+
+                    <span class="notification-dot"></span>
+
+                </button>
+
+
+                <div class="topbar-divider"></div>
+
+
+                <div class="topbar-user">
+
+                    <div class="topbar-avatar">
+                        JK
+                    </div>
+
+
+                    <div class="topbar-user-info">
+
+                        <strong>
+                            {{ student.name }}
+                        </strong>
+
+                        <span>
+                            {{ student.department }} ·
+                            {{ student.year }} Year
+                        </span>
+
+                    </div>
+
+
+                    <i class="bi bi-chevron-down"></i>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= PAGE ================= -->
+
+        <div class="page-content">
+
+
+            <!-- PAGE HEADER -->
+
+            <section class="page-header">
+
+                <span class="page-label">
+                    CAREER &amp; PLACEMENT CELL
+                </span>
+
+                <h1>
+                    Placements
+                </h1>
+
+                <p>
+                    Explore placement opportunities and apply for eligible
+                    company drives.
+                </p>
+
+            </section>
+
+
+
+            <!-- ================= STATS ================= -->
+
+            <section class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon purple">
+
+                        <i class="bi bi-building"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            COMPANIES
+                        </span>
+
+                        <strong>
+                            {{ company_count }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+
+                        <i class="bi bi-briefcase"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            OPEN DRIVES
+                        </span>
+
+                        <strong>
+                            {{ open_drives }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+
+                        <i class="bi bi-check-circle"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            APPLIED
+                        </span>
+
+                        <strong>
+                            {{ applied_count }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+
+                        <i class="bi bi-trophy"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            OFFERS
+                        </span>
+
+                        <strong>
+                            {{ selected_count }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================= ELIGIBILITY ================= -->
+
+            <section class="eligibility-card">
+
+                <div class="eligibility-icon">
+
+                    <i class="bi bi-person-check"></i>
+
+                </div>
+
+
+                <div class="eligibility-content">
+
+                    <strong>
+                        Your Placement Eligibility
+                    </strong>
+
+                    <span>
+
+                        Your current CGPA is
+                        <strong>
+                            {{ "%.2f"|format(student.cgpa) }}
+                        </strong>.
+
+                        You can apply for drives where you meet
+                        the minimum CGPA requirement.
+
+                    </span>
+
+                </div>
+
+
+                <div class="eligibility-status">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    Eligible
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================= FILTER ================= -->
+
+            <section class="filter-bar">
+
+                <div class="filter-title">
+
+                    <i class="bi bi-funnel"></i>
+
+                    Placement Drives
+
+                </div>
+
+
+                <div class="filter-buttons">
+
+                    <button
+                        class="filter-btn active"
+                        data-filter="all">
+
+                        All
+
+                    </button>
+
+
+                    <button
+                        class="filter-btn"
+                        data-filter="open">
+
+                        Open
+
+                    </button>
+
+
+                    <button
+                        class="filter-btn"
+                        data-filter="applied">
+
+                        Applied
+
+                    </button>
+
+
+                    <button
+                        class="filter-btn"
+                        data-filter="eligible">
+
+                        Eligible
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================= DRIVES ================= -->
+
+            <section class="drives-section">
+
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>
+                            Upcoming Placement Drives
+                        </h2>
+
+                        <span>
+                            Latest opportunities available for you
+                        </span>
+
+                    </div>
+
+
+                    <span class="drive-count">
+
+                        {{ open_drives }}
+                        Open Drives
+
+                    </span>
+
+                </div>
+
+
+
+                <div class="drives-grid">
+
+
+                    {% if placements %}
+
+
+                        {% for placement in placements %}
+
+                        <article
+                            class="drive-card placement-card"
+
+                            data-status="{{ placement.status|lower }}"
+
+                            data-applied="{% if placement.is_applied %}true{% else %}false{% endif %}"
+
+                            data-eligible="{% if placement.eligible %}true{% else %}false{% endif %}">
+
+
+                            <!-- COMPANY HEADER -->
+
+                            <div class="company-header">
+
+
+                                <div
+                                    class="company-logo
+                                    {% if loop.index % 4 == 1 %}
+                                        purple-logo
+                                    {% elif loop.index % 4 == 2 %}
+                                        blue-logo
+                                    {% elif loop.index % 4 == 3 %}
+                                        green-logo
+                                    {% else %}
+                                        orange-logo
+                                    {% endif %}">
+
+                                    {{ placement.company_name[:3]|upper }}
+
+                                </div>
+
+
+                                <div class="company-info">
+
+                                    <h3>
+                                        {{ placement.company_name }}
+                                    </h3>
+
+                                    <span>
+                                        {{ placement.job_role }}
+                                    </span>
+
+                                </div>
+
+
+                                {% if placement.status == "Open" %}
+
+                                    <span class="open-badge">
+                                        Open
+                                    </span>
+
+                                {% elif placement.status == "Upcoming" %}
+
+                                    <span class="open-badge">
+                                        Upcoming
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="open-badge">
+                                        Closed
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+
+                            <!-- DRIVE DETAILS -->
+
+                            <div class="drive-details">
+
+
+                                <div>
+
+                                    <span>
+                                        PACKAGE
+                                    </span>
+
+                                    <strong>
+                                        {{ placement.package_display }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        ELIGIBILITY
+                                    </span>
+
+                                    <strong>
+                                        {{ placement.eligibility_display }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>
+                                        DRIVE DATE
+                                    </span>
+
+                                    <strong>
+                                        {{ placement.drive_date_display }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <!-- FOOTER -->
+
+                            <div class="drive-footer">
+
+
+                                <span class="deadline">
+
+                                    <i class="bi bi-clock"></i>
+
+                                    {% if placement.deadline_display %}
+
+                                        Apply before
+                                        {{ placement.deadline_display }}
+
+                                    {% else %}
+
+                                        Deadline not specified
+
+                                    {% endif %}
+
+                                </span>
+
+
+
+                                {% if placement.is_applied %}
+
+                                    <button
+                                        class="apply-btn applied-button"
+                                        type="button"
+                                        disabled>
+
+                                        <i class="bi bi-check2"></i>
+
+                                        {{ placement.application_status }}
+
+                                    </button>
+
+
+                                {% elif placement.status != "Open" %}
+
+                                    <button
+                                        class="apply-btn"
+                                        type="button"
+                                        disabled>
+
+                                        Not Open
+
+                                    </button>
+
+
+                                {% elif not placement.eligible %}
+
+                                    <button
+                                        class="apply-btn"
+                                        type="button"
+                                        disabled>
+
+                                        Not Eligible
+
+                                    </button>
+
+
+                                {% else %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'apply_placement',
+                                            placement_id=placement.id
+                                        ) }}">
+
+                                        <button
+                                            class="apply-btn"
+                                            type="submit">
+
+                                            Apply
+
+                                            <i class="bi bi-arrow-right"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+
+                        </article>
+
+                        {% endfor %}
+
+
+                    {% else %}
+
+
+                        <div
+                            class="empty-state"
+                            style="grid-column: 1 / -1;">
+
+                            <i class="bi bi-briefcase"></i>
+
+                            <h3>
+                                No Placement Drives
+                            </h3>
+
+                            <p>
+                                There are currently no placement
+                                opportunities available.
+                            </p>
+
+                        </div>
+
+
+                    {% endif %}
+
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================= MY APPLICATIONS ================= -->
+
+            <section class="applications-section">
+
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>
+                            My Applications
+                        </h2>
+
+                        <span>
+                            Track your placement applications
+                        </span>
+
+                    </div>
+
+
+                    <span class="drive-count">
+
+                        {{ applied_count }}
+                        Applications
+
+                    </span>
+
+                </div>
+
+
+
+                <div class="application-table">
+
+
+                    <div class="table-header">
+
+                        <span>
+                            COMPANY
+                        </span>
+
+                        <span>
+                            ROLE
+                        </span>
+
+                        <span>
+                            PACKAGE
+                        </span>
+
+                        <span>
+                            STATUS
+                        </span>
+
+                    </div>
+
+
+
+                    {% if applications %}
+
+
+                        {% for application in applications %}
+
+                        <div class="table-row">
+
+
+                            <div class="company-cell">
+
+                                <div class="mini-logo">
+
+                                    {{ application.company_name[:3]|upper }}
+
+                                </div>
+
+
+                                <strong>
+
+                                    {{ application.company_name }}
+
+                                </strong>
+
+                            </div>
+
+
+
+                            <span>
+
+                                {{ application.job_role }}
+
+                            </span>
+
+
+
+                            <strong>
+
+                                {{ application.package_display }}
+
+                            </strong>
+
+
+
+                            {% if application.application_status == "Applied" %}
+
+                                <span class="status applied">
+                                    Applied
+                                </span>
+
+                            {% elif application.application_status == "Shortlisted" %}
+
+                                <span class="status shortlisted">
+                                    Shortlisted
+                                </span>
+
+                            {% elif application.application_status == "Selected" %}
+
+                                <span class="status selected">
+                                    Selected
+                                </span>
+
+                            {% elif application.application_status == "Rejected" %}
+
+                                <span class="status rejected">
+                                    Rejected
+                                </span>
+
+                            {% else %}
+
+                                <span class="status applied">
+                                    {{ application.application_status }}
+                                </span>
+
+                            {% endif %}
+
+
+                        </div>
+
+                        {% endfor %}
+
+
+                    {% else %}
+
+
+                        <div
+                            class="empty-state"
+                            style="padding: 40px;">
+
+                            <i class="bi bi-file-earmark-text"></i>
+
+                            <h3>
+                                No Applications Yet
+                            </h3>
+
+                            <p>
+                                Your placement applications will
+                                appear here.
+                            </p>
+
+                        </div>
+
+
+                    {% endif %}
+
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- MOBILE MENU -->
+
+<button
+    class="mobile-menu-button"
+    id="mobileMenuButton">
+
+    <i class="bi bi-list"></i>
+
+</button>
+
+
+
+<script>
+
+
+// ==========================================
+// MOBILE MENU
+// ==========================================
+
+const mobileButton =
+    document.getElementById("mobileMenuButton");
+
+const sidebar =
+    document.getElementById("sidebar");
+
+
+if (mobileButton && sidebar) {
+
+    mobileButton.addEventListener(
+        "click",
+        function () {
+
+            sidebar.classList.toggle("show");
+
+        }
+    );
+
+}
+
+
+
+// ==========================================
+// FILTER BUTTONS
+// ==========================================
+
+const filterButtons =
+    document.querySelectorAll(".filter-btn");
+
+const placementCards =
+    document.querySelectorAll(".placement-card");
+
+
+filterButtons.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            filterButtons.forEach(btn => {
+
+                btn.classList.remove("active");
+
+            });
+
+
+            this.classList.add("active");
+
+
+            const filter =
+                this.dataset.filter;
+
+
+            placementCards.forEach(card => {
+
+                const status =
+                    card.dataset.status;
+
+                const applied =
+                    card.dataset.applied === "true";
+
+                const eligible =
+                    card.dataset.eligible === "true";
+
+
+                let show = true;
+
+
+                if (filter === "open") {
+
+                    show =
+                        status === "open";
+
+                }
+
+
+                else if (filter === "applied") {
+
+                    show =
+                        applied;
+
+                }
+
+
+                else if (filter === "eligible") {
+
+                    show =
+                        eligible;
+
+                }
+
+
+                card.style.display =
+                    show ? "" : "none";
+
+            });
+
+        }
+    );
+
+});
+
+</script>
+
+
+</body>
+
+</html>

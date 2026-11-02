@@ -1,0 +1,280 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Staff Profile | EduCloud</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <!-- Same CSS as Staff Dashboard -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/staff_dashboard.css') }}">
+
+    <!-- Profile-specific CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/staff_profile.css') }}">
+</head>
+
+<body>
+
+<div class="portal">
+
+    <!-- SIDEBAR: SAME AS STAFF DASHBOARD -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+            <div>
+                <h2>EduCloud</h2>
+                <span>Staff Portal</span>
+            </div>
+        </div>
+
+        <div class="menu-title">STAFF MENU</div>
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('staff_dashboard') }}">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('staff_students') }}">
+                <i class="bi bi-people-fill"></i>
+                <span>Students</span>
+            </a>
+
+            <a href="{{ url_for('staff_attendance') }}">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Attendance</span>
+            </a>
+
+            <a href="{{ url_for('staff_marks') }}">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Marks & Grades</span>
+            </a>
+
+            <a href="{{ url_for('staff_exams') }}">
+                <i class="bi bi-journal-text"></i>
+                <span>Exams</span>
+            </a>
+
+            <a href="{{ url_for('staff_timetable') }}">
+                <i class="bi bi-calendar3"></i>
+                <span>Timetable</span>
+            </a>
+
+            <a href="{{ url_for('staff_notifications') }}">
+                <i class="bi bi-bell-fill"></i>
+                <span>Notifications</span>
+            </a>
+
+            <a href="{{ url_for('staff_venue_updates') }}">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>Venue Updates</span>
+            </a>
+
+            <a href="{{ url_for('staff_events') }}">
+                <i class="bi bi-calendar-event"></i>
+                <span>Events</span>
+            </a>
+
+            <a href="{{ url_for('staff_placements') }}">
+                <i class="bi bi-briefcase-fill"></i>
+                <span>Placements</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <a href="{{ url_for('staff_profile') }}" class="active">
+                <i class="bi bi-person-circle"></i>
+                <span>My Profile</span>
+            </a>
+
+            <a href="{{ url_for('staff_change_password') }}">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>Change Password</span>
+            </a>
+
+            <a href="{{ url_for('logout') }}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div>
+                <div class="breadcrumb">
+                    Staff Portal
+                    <i class="bi bi-chevron-right"></i>
+                    My Profile
+                </div>
+
+                <h1>My Profile</h1>
+
+                <p>View and manage your staff account details.</p>
+            </div>
+
+            <div class="topbar-right">
+
+                <div class="staff-mini">
+
+                    <div class="staff-avatar">
+                        {{ staff.name[:2]|upper }}
+                    </div>
+
+                    <div>
+                        <strong>{{ staff.name }}</strong>
+                        <small>Staff Account</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PROFILE CONTENT -->
+        <section class="content">
+
+            <div class="profile-page">
+
+                <section class="profile-card">
+
+                    <div class="profile-heading">
+
+                        <div class="large-avatar">
+                            {{ staff.name[:2]|upper }}
+                        </div>
+
+                        <div>
+                            <h2>{{ staff.name }}</h2>
+
+                            <p>{{ staff.email }}</p>
+
+                            <span class="role-badge">
+                                Staff Account
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- FLASH MESSAGES -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert {{ category }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+
+                    <!-- PROFILE FORM -->
+                    <form method="POST"
+                          action="{{ url_for('staff_profile') }}">
+
+                        <h3>Personal Information</h3>
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    value="{{ staff.name }}"
+                                    required
+                                    maxlength="100">
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value="{{ staff.email }}"
+                                    required
+                                    maxlength="254">
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="role">Account Role</label>
+
+                                <input
+                                    type="text"
+                                    id="role"
+                                    value="{{ staff.role|title }}"
+                                    disabled>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label for="created_at">Account Created</label>
+
+                                <input
+                                    type="text"
+                                    id="created_at"
+                                    value="{{ staff.created_at or 'Not available' }}"
+                                    disabled>
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-actions">
+
+                            <button type="reset" class="cancel-btn">
+                                Reset
+                            </button>
+
+                            <button type="submit" class="save-btn">
+                                Save Changes
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

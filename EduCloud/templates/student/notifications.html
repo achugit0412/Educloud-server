@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | EduCloud</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/staff_notifications.css') }}">
+
+    <style>
+        /* SIDEBAR */
+        :root {
+            --sidebar-width: 295px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .layout {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #0d1325;
+            border-right: 1px solid #202942;
+            padding: 28px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            z-index: 1000;
+            scrollbar-width: thin;
+            scrollbar-color: #68738f #0d1325;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 0 14px;
+            flex-shrink: 0;
+        }
+
+        .brand-icon {
+            width: 56px;
+            height: 56px;
+            min-width: 56px;
+            border-radius: 17px;
+            background: linear-gradient(135deg, #6658f2, #5145db);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .brand-text h2 {
+            color: #f8fafc;
+            font-size: 23px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .brand-text span {
+            color: #8792a9;
+            font-size: 12px;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            min-height: 1px;
+            background: #202942;
+            margin: 28px 0 27px;
+        }
+
+        .menu-section {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .menu-title {
+            color: #71809b;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            padding: 0 17px 13px;
+        }
+
+        .nav-item {
+            min-height: 54px;
+            height: 54px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 0 18px;
+            border-radius: 12px;
+            color: #aeb8cc;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: 0.2s ease;
+        }
+
+        .nav-item i {
+            width: 20px;
+            min-width: 20px;
+            font-size: 20px;
+            color: #8290aa;
+            text-align: center;
+            font-style: normal;
+        }
+
+        .nav-item:hover {
+            background: rgba(98, 85, 237, 0.08);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(98, 85, 237, 0.15);
+            color: white;
+            border-left: 2px solid #7468ff;
+        }
+
+        .nav-item.active i {
+            color: #8f85ff;
+        }
+
+        .campus-section {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-user {
+            margin-top: 20px;
+            min-height: 64px;
+            border-radius: 14px;
+            background: #161d32;
+            padding: 11px 13px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            flex-shrink: 0;
+        }
+
+        .notification-count {
+            margin-left: auto;
+            min-width: 25px;
+            height: 25px;
+            padding: 0 7px;
+            border-radius: 50%;
+            background: #332d63;
+            color: #d9d2ff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #0d1325;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #68738f;
+            border-radius: 10px;
+        }
+
+        /* MAIN CONTENT POSITION */
+        .main-content {
+            width: calc(100% - var(--sidebar-width));
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        @media (max-width: 1100px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand-section">
+            <div class="brand-icon">EC</div>
+
+            <div class="brand-text">
+                <h2>EduCloud</h2>
+                <span>Academic Portal</span>
+            </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <!-- MAIN MENU -->
+        <nav class="menu-section">
+
+            <div class="menu-title">MAIN MENU</div>
+
+            <a href="/student/dashboard" class="nav-item">
+                <i>▦</i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="/student/profile" class="nav-item">
+                <i>♙</i>
+                <span>Profile</span>
+            </a>
+
+            <a href="/student/attendance" class="nav-item">
+                <i>▣</i>
+                <span>Attendance</span>
+            </a>
+
+            <a href="/student/timetable" class="nav-item">
+                <i>◷</i>
+                <span>Timetable</span>
+            </a>
+
+            <a href="/student/marks" class="nav-item">
+                <i>▥</i>
+                <span>Marks &amp; CGPA</span>
+            </a>
+
+            <a href="/student/exams" class="nav-item">
+                <i>▤</i>
+                <span>Exams</span>
+            </a>
+
+            <a href="/student/hall-ticket" class="nav-item">
+                <i>▣</i>
+                <span>Hall Ticket</span>
+            </a>
+
+        </nav>
+
+        <!-- CAMPUS MENU -->
+        <div class="campus-section">
+
+            <div class="menu-title">CAMPUS</div>
+
+            <a href="/student/events" class="nav-item">
+                <i>▣</i>
+                <span>Events</span>
+            </a>
+
+            <a href="/student/placements" class="nav-item">
+                <i>▱</i>
+                <span>Placements</span>
+            </a>
+
+            <a href="/student/hackathons" class="nav-item">
+                <i>ϟ</i>
+                <span>Hackathons</span>
+            </a>
+
+            <a href="/student/venue-updates" class="nav-item">
+                <i>⌖</i>
+                <span>Venue Updates</span>
+            </a>
+
+            <a href="/student/notifications" class="nav-item active">
+                <i>♧</i>
+                <span>Notifications</span>
+                <span class="notification-count">
+                    {{ total_notifications }}
+                </span>
+            </a>
+
+        </div>
+
+        <!-- ACCOUNT -->
+        <div class="campus-section">
+            <div class="menu-title">ACCOUNT</div>
+
+            <a href="/student/change-password" class="nav-item">
+                <i>⚙</i>
+                <span>Change Password</span>
+            </a>
+
+            <a href="/logout" class="nav-item">
+                <i>↪</i>
+                <span>Logout</span>
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <h1>Notifications</h1>
+                <p>Announcements published for you and your class.</p>
+            </div>
+        </header>
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">🔔</div>
+                <div>
+                    <span>Available Notifications</span>
+                    <h2>{{ total_notifications }}</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div>
+                    <span>Important</span>
+                    <h2>{{ important_notifications }}</h2>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="filter-card">
+
+            <div class="search-box">
+                <label for="searchInput">Search Notifications</label>
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search by title or message..."
+                    oninput="filterNotifications()">
+            </div>
+
+            <div class="filter-group">
+                <label for="categoryFilter">Category</label>
+
+                <select
+                    id="categoryFilter"
+                    onchange="filterNotifications()">
+
+                    <option value="all">All Categories</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Exam">Exam</option>
+                    <option value="Event">Event</option>
+                    <option value="Placement">Placement</option>
+                    <option value="General">General</option>
+
+                </select>
+            </div>
+
+        </section>
+
+        <section class="notification-card">
+
+            <div class="section-header">
+                <h2>Latest Updates</h2>
+                <p>Only published announcements for your audience are shown here.</p>
+            </div>
+
+            <div id="notificationList">
+
+                {% for notification in notifications %}
+
+                <article class="notification-item"
+                    data-title="{{ notification.title|e }}"
+                    data-message="{{ notification.message|e }}"
+                    data-category="{{ notification.category }}">
+
+                    <div class="notification-icon">
+
+                        {% if notification.category == 'Exam' %}
+                            📝
+                        {% elif notification.category == 'Academic' %}
+                            📚
+                        {% elif notification.category == 'Placement' %}
+                            💼
+                        {% elif notification.category == 'Event' %}
+                            🎯
+                        {% else %}
+                            🔔
+                        {% endif %}
+
+                    </div>
+
+                    <div class="notification-content">
+
+                        <div class="notification-title-row">
+                            <h3>{{ notification.title }}</h3>
+                            <span class="status published">Published</span>
+                        </div>
+
+                        <p>{{ notification.message }}</p>
+
+                        <div class="notification-meta student-note-meta">
+
+                            <span>🏷 {{ notification.category }}</span>
+
+                            <span>
+                                🕒
+                                {{ notification.created_at.strftime('%d %b %Y, %I:%M %p') if notification.created_at else '—' }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                {% else %}
+
+                <p class="empty-state">
+                    There are no published notifications for you yet.
+                </p>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+function filterNotifications() {
+
+    const search = document
+        .getElementById("searchInput")
+        .value.toLowerCase();
+
+    const category = document
+        .getElementById("categoryFilter")
+        .value;
+
+    document.querySelectorAll(".notification-item").forEach(item => {
+
+        const text =
+            `${item.dataset.title || ""} ${item.dataset.message || ""}`
+            .toLowerCase();
+
+        const matchesSearch = text.includes(search);
+
+        const matchesCategory =
+            category === "all" ||
+            item.dataset.category === category;
+
+        item.style.display =
+            matchesSearch && matchesCategory ? "flex" : "none";
+
+    });
+}
+</script>
+
+</body>
+</html>

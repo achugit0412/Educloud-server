@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>EduCloud | Student Dashboard</title>
+
+
+    <!-- Bootstrap -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- Google Font -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- Dashboard CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/dashboard.css') }}"
+    >
+
+    <style>
+        .empty-state { color: #7b8494; padding: 12px 0; margin: 0; font-size: .92rem; }
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+
+    <!-- Logo -->
+
+    <div class="sidebar-brand">
+
+        <div class="sidebar-logo">
+
+            <i class="bi bi-cloud-check"></i>
+
+        </div>
+
+
+        <div>
+
+            <strong>
+                EduCloud
+            </strong>
+
+            <small>
+                Academic Portal
+            </small>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- Navigation -->
+
+    <div class="sidebar-navigation">
+
+
+        <p class="menu-label">
+            MAIN MENU
+        </p>
+
+
+        <!-- Dashboard -->
+
+        <a
+            href="/student/dashboard"
+            class="sidebar-link active"
+        >
+
+            <i class="bi bi-grid-1x2"></i>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <!-- Profile -->
+
+        <a
+            href="/student/profile"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-person"></i>
+
+            <span>
+                Profile
+            </span>
+
+        </a>
+
+
+        <!-- Attendance -->
+
+        <a
+            href="/student/attendance"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-calendar-check"></i>
+
+            <span>
+                Attendance
+            </span>
+
+        </a>
+
+
+        <!-- Timetable -->
+
+        <a
+            href="/student/timetable"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-clock"></i>
+
+            <span>
+                Timetable
+            </span>
+
+        </a>
+
+
+        <!-- Marks -->
+
+        <a
+            href="/student/marks"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-bar-chart"></i>
+
+            <span>
+                Marks & CGPA
+            </span>
+
+        </a>
+
+
+        <!-- Exams -->
+
+        <a
+            href="/student/exams"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-journal-text"></i>
+
+            <span>
+                Exams
+            </span>
+
+        </a>
+
+
+        <!-- Hall Ticket -->
+
+        <a
+            href="/student/hall-ticket"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-ticket-perforated"></i>
+
+            <span>
+                Hall Ticket
+            </span>
+
+        </a>
+
+
+
+        <p class="menu-label second-label">
+            CAMPUS
+        </p>
+
+
+        <!-- Events -->
+
+        <a
+            href="/student/events"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-calendar-event"></i>
+
+            <span>
+                Events
+            </span>
+
+        </a>
+
+
+        <!-- Placements -->
+
+        <a
+            href="/student/placements"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-briefcase"></i>
+
+            <span>
+                Placements
+            </span>
+
+        </a>
+
+
+        <!-- Hackathons -->
+
+        <a
+            href="/student/hackathons"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-trophy"></i>
+
+            <span>
+                Hackathons
+            </span>
+
+        </a>
+
+
+        <!-- Venues -->
+
+        <a
+            href="/student/venues"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-geo-alt"></i>
+
+            <span>
+                Venue Updates
+            </span>
+
+        </a>
+
+
+        <!-- Notifications -->
+
+        <a
+            href="/student/notifications"
+            class="sidebar-link notification-link"
+        >
+
+            <i class="bi bi-bell"></i>
+
+            <span>
+                Notifications
+            </span>
+
+            <span class="notification-count">
+                {{ notification_count }}
+            </span>
+
+        </a>
+
+    </div>
+
+
+
+    <!-- Bottom -->
+
+    <div class="sidebar-bottom">
+
+
+        <a
+            href="#"
+            class="sidebar-link"
+        >
+
+            <i class="bi bi-gear"></i>
+
+            <span>
+                Settings
+            </span>
+
+        </a>
+
+
+        <a
+            href="/logout"
+            class="sidebar-link logout"
+        >
+
+            <i class="bi bi-box-arrow-left"></i>
+
+            <span>
+                Logout
+            </span>
+
+        </a>
+
+
+        <!-- User -->
+
+        <div class="sidebar-user">
+
+            <div class="user-avatar">
+                {{ session.get('name', 'Student').split()[0][0] }}{{ session.get('name', 'Student').split()[-1][0] if session.get('name', '').split()|length > 1 else '' }}
+            </div>
+
+
+            <div class="user-details">
+
+                <strong>{{ session.get('name', 'Student') }}</strong>
+
+                <small>
+    Student · {{ student.register_no }}
+</small>
+
+            </div>
+
+
+            <i class="bi bi-three-dots"></i>
+
+        </div>
+
+    </div>
+
+</aside>
+
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<main class="main-content">
+
+
+    <!-- ================================================
+         TOP BAR
+    ================================================= -->
+
+    <header class="topbar">
+
+
+        <!-- Mobile Menu -->
+
+        <button
+            class="mobile-menu"
+            onclick="toggleSidebar()"
+        >
+
+            <i class="bi bi-list"></i>
+
+        </button>
+
+
+        <!-- Page -->
+
+        <div class="page-location">
+
+            <span>
+                Student Portal
+            </span>
+
+            <i class="bi bi-chevron-right"></i>
+
+            <strong>
+                Dashboard
+            </strong>
+
+        </div>
+
+
+
+        <!-- Right -->
+
+        <div class="topbar-right">
+
+
+            <!-- Search -->
+
+            <button class="topbar-button">
+
+                <i class="bi bi-search"></i>
+
+            </button>
+
+
+            <!-- Notification -->
+
+            <button class="topbar-button notification-button"
+                    type="button"
+                    aria-label="Notifications"
+                    onclick="window.location.href='/student/notifications'">
+
+                <i class="bi bi-bell"></i>
+
+                <span>{{ notification_count }}</span>
+
+            </button>
+
+
+            <!-- User -->
+
+            <div class="topbar-user">
+
+
+                <div class="topbar-avatar">
+    {{ session.get('name', 'Student').split()[0][0] }}{{ session.get('name', 'Student').split()[-1][0] if session.get('name', '').split()|length > 1 else '' }}
+</div>
+
+                <div>
+
+                    <strong>{{ session.get('name', 'Student') }}</strong>
+                    <small>
+                        {{ student.department|default('Department not set') }} · {{ student.year_label|default(student.year|string) }}
+                    </small>
+
+                </div>
+
+
+                <i class="bi bi-chevron-down"></i>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ================================================
+         DASHBOARD CONTENT
+    ================================================= -->
+
+    <div class="dashboard-container">
+
+
+        <!-- ============================================
+             WELCOME
+        ============================================= -->
+
+        <section class="welcome-section">
+
+
+            <div>
+
+                <span class="welcome-label">
+                    STUDENT DASHBOARD
+                </span>
+
+
+                <h1>
+    {{ greeting|default('Welcome') }}, {{ student.name|default(session.get('name', 'Student')) }} 👋
+</h1>
+
+                <p>
+                    Here's your academic overview for today.
+                </p>
+
+            </div>
+
+
+            <div class="date-box">
+
+                <i class="bi bi-calendar3"></i>
+
+                <div>
+
+                    <small>
+                        TODAY
+                    </small>
+
+                    <strong>
+                        {{ today_date|default('Today') }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ============================================
+             STATISTICS
+        ============================================= -->
+
+        <section class="stats-grid">
+
+
+            <!-- Attendance -->
+
+            <div class="stat-card">
+
+
+                <div class="stat-card-top">
+
+                    <div class="stat-icon blue">
+
+                        <i class="bi bi-calendar-check"></i>
+
+                    </div>
+
+
+                    <span class="stat-status good">
+
+                        <i class="bi bi-arrow-up"></i>
+
+                        {{ attendance_change|default('') }}
+
+                    </span>
+
+                </div>
+
+
+                <div class="stat-info">
+
+                    <span>
+                        Overall Attendance
+                    </span>
+
+                    <strong>
+                        {{ attendance_percentage|default(0)|round(1) }}%
+                    </strong>
+
+                    <small>
+                        {{ 'Above minimum requirement' if attendance_percentage|default(0)|float >= 75 else 'Below minimum requirement' }}
+                    </small>
+
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar blue-progress"
+                        {{ ('style="width: ' ~ (attendance_percentage|default(0)|round(1)) ~ '%;"')|safe }}
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- CGPA -->
+
+          <!-- CGPA CARD -->
+<div class="stat-card cgpa-card">
+
+    <div class="stat-card-top">
+
+        <div class="stat-icon purple">
+            <i class="bi bi-mortarboard"></i>
+        </div>
+
+        <span class="stat-status excellent">
+            {{ 'Excellent' if cgpa|float >= 8 else
+               ('Good' if cgpa|float >= 6 else 'Keep improving') }}
+        </span>
+
+    </div>
+
+    <div class="stat-info">
+
+        <span>Current CGPA</span>
+
+        <strong>
+            {{ "%.2f"|format(cgpa|default(0)|float) }}
+        </strong>
+
+        <small>Based on latest semester</small>
+
+    </div>
+
+    <div class="cgpa-bar">
+        <div
+            {{ ('style="width: ' ~ (((cgpa|default(0)|float) * 10) if cgpa|default(0)|float <= 10 else 100) ~ '%;"')|safe }}
+        ></div>
+    </div>
+
+</div>
+
+            <!-- Exams -->
+
+            <!-- UPCOMING EXAMS CARD -->
+<div class="stat-card">
+
+    <div class="stat-card-top">
+
+        <div class="stat-icon orange">
+            <i class="bi bi-journal-text"></i>
+        </div>
+
+        <span class="stat-status upcoming">
+            {% if upcoming_exam_count > 0 %}
+                Upcoming
+            {% else %}
+                No Exams
+            {% endif %}
+        </span>
+
+    </div>
+
+    <div class="stat-info">
+
+        <span>Upcoming Exams</span>
+
+        <strong>
+            {{ upcoming_exam_count }}
+        </strong>
+
+        <small>
+            {{ next_exam_label }}
+        </small>
+
+    </div>
+
+    <div class="exam-mini">
+
+        <i class="bi bi-calendar-event"></i>
+
+        {% if next_exam %}
+
+            <div>
+                <strong>{{ next_exam.subject }}</strong>
+
+                <small>
+                    {{ next_exam.exam_date.strftime('%d %b %Y') }}
+                    ·
+                   {{ next_exam.time }}
+                </small>
+
+                {% if next_exam.venue %}
+                    <small>
+                        <i class="bi bi-geo-alt"></i>
+                        {{ next_exam.venue }}
+                    </small>
+                {% endif %}
+            </div>
+
+        {% else %}
+
+            <span>No upcoming exam</span>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+            <!-- Notifications -->
+
+            <div class="stat-card">
+
+
+                <div class="stat-card-top">
+
+                    <div class="stat-icon green">
+
+                        <i class="bi bi-bell"></i>
+
+                    </div>
+
+
+                    <span class="stat-status new">
+                        New
+                    </span>
+
+                </div>
+
+
+                <div class="stat-info">
+
+                    <span>
+                        Notifications
+                    </span>
+
+                    <strong>
+                        {{ notification_count|default(0) }}
+                    </strong>
+
+                    <small>
+                        Unread updates
+                    </small>
+
+                </div>
+
+
+                <div class="notification-mini">
+
+                    <i class="bi bi-info-circle"></i>
+
+                    {{ recent_notifications[0].title if recent_notifications|default([])|length else 'No new campus updates' }}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ============================================
+             MAIN GRID
+        ============================================= -->
+
+        <section class="dashboard-grid">
+
+
+            <!-- ========================================
+                 ATTENDANCE
+            ========================================= -->
+
+            <div class="dashboard-card attendance-card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="card-label">
+                            ACADEMIC
+                        </span>
+
+                        <h3>
+                            Attendance Overview
+                        </h3>
+
+                    </div>
+
+
+                    <a href="/student/attendance">
+                        View Details
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </div>
+
+
+                <!-- Circle -->
+
+                <div class="attendance-content">
+
+
+                    <div class="attendance-circle">
+
+                        <div>
+
+                            <strong>{{ attendance_percentage|default(0)|round(1) }}%</strong>
+
+                            <span>
+                                Overall
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="attendance-details">
+                        {% for item in attendance_by_subject|default([]) %}
+                        <div class="attendance-item{% if item.percentage|default(0)|float < 75 %} warning-item{% endif %}">
+                            <span class="subject-dot {{ ['blue-dot', 'purple-dot', 'green-dot', 'orange-dot'][loop.index0 % 4] }}"></span>
+                            <div>
+                                <strong>{{ item.subject|default('Subject') }}</strong>
+                                <small>{{ item.present_classes|default(0) }} / {{ item.total_classes|default(0) }} classes</small>
+                            </div>
+                            <b>{{ item.percentage|default(0)|round(1) }}%</b>
+                        </div>
+                        {% else %}
+                        <p class="empty-state">No attendance records available yet.</p>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ========================================
+                 TODAY'S TIMETABLE
+            ========================================= -->
+
+            <div class="dashboard-card timetable-card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="card-label">
+                            TODAY
+                        </span>
+
+                        <h3>
+                            Timetable
+                        </h3>
+
+                    </div>
+
+
+                    <a href="/student/timetable">
+                        Full Timetable
+                    </a>
+
+                </div>
+
+
+                <div class="timetable-list">
+                    {% for item in today_timetable|default([]) %}
+                    <div class="class-item{% if loop.first %} active-class{% endif %}">
+                        <div class="class-time">
+                            <strong>{{ item.start_time|default('') }}</strong>
+                            <span>{{ item.end_time|default('') }}</span>
+                        </div>
+                        <div class="class-line"><span></span></div>
+                        <div class="class-details">
+                            <strong>{{ item.subject|default('Class') }}</strong>
+                            <small>{{ item.venue|default(item.room|default('Venue not specified')) }}</small>
+                        </div>
+                        {% if loop.first %}<span class="class-badge">{{ item.status_label|default('Today') }}</span>{% endif %}
+                    </div>
+                    {% else %}
+                    <p class="empty-state">No timetable entries available for today.</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ============================================
+             LOWER GRID
+        ============================================= -->
+
+        <section class="lower-grid">
+
+
+            <!-- ========================================
+                 UPCOMING EXAMS
+            ========================================= -->
+
+            <div class="dashboard-card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="card-label">
+                            EXAMINATION
+                        </span>
+
+                        <h3>
+                            Upcoming Exams
+                        </h3>
+
+                    </div>
+
+
+                    <a href="/student/exams">
+                        View All
+                    </a>
+
+                </div>
+
+
+                <div class="exam-list">
+                    {% for exam in upcoming_exams|default([]) %}
+                    <div class="exam-item">
+                        <div class="exam-date{% if loop.index0 % 3 == 1 %} purple-date{% elif loop.index0 % 3 == 2 %} green-date{% endif %}">
+                            <strong>{{ exam.day|default('—') }}</strong>
+                            <span>{{ exam.month|default('') }}</span>
+                        </div>
+                        <div class="exam-details">
+                            <strong>{{ exam.subject|default('Exam') }}</strong>
+                            <small>{{ exam.time|default('Time not announced') }}{% if exam.venue|default('') %} · {{ exam.venue }}{% endif %}</small>
+                        </div>
+                        <span class="exam-tag">{{ exam.label|default('Upcoming') }}</span>
+                    </div>
+                    {% else %}
+                    <p class="empty-state">No upcoming exams scheduled.</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+
+
+            <!-- ========================================
+                 NOTIFICATIONS
+            ========================================= -->
+
+            <div class="dashboard-card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="card-label">
+                            UPDATES
+                        </span>
+
+                        <h3>
+                            Recent Notifications
+                        </h3>
+
+                    </div>
+
+
+                    <a href="/student/notifications">
+                        View All
+                    </a>
+
+                </div>
+
+
+                <div class="notification-list">
+                    {% for item in recent_notifications|default([]) %}
+                    <div class="notification-item">
+                        <div class="notification-icon {{ ['blue', 'purple', 'orange'][loop.index0 % 3] }}">
+                            <i class="bi {{ item.icon|default('bi-bell') }}"></i>
+                        </div>
+                        <div>
+                            <strong>{{ item.title|default('Notification') }}</strong>
+                            <small>{{ item.message|default('') }}</small>
+                            <span>{{ item.time_ago|default('') }}</span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="empty-state">No recent notifications.</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ============================================
+             BOTTOM ALERT
+        ============================================= -->
+
+        <section class="attendance-alert">
+
+
+            <div class="alert-icon">
+
+                <i class="bi bi-exclamation-triangle"></i>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Attendance Reminder
+                </strong>
+
+                <p>
+                    Your overall attendance is {{ attendance_percentage|default(0)|round(1) }}%. Please maintain regular attendance.
+                </p>
+
+            </div>
+
+
+            <a href="/student/attendance">
+                Check Attendance
+                <i class="bi bi-arrow-right"></i>
+            </a>
+
+        </section>
+
+
+    </div>
+
+</main>
+
+
+
+<!-- =====================================================
+     MOBILE SIDEBAR OVERLAY
+===================================================== -->
+
+<div
+    class="sidebar-overlay"
+    onclick="toggleSidebar()"
+></div>
+
+
+
+<script>
+
+function toggleSidebar() {
+
+    const sidebar =
+        document.querySelector(".sidebar");
+
+    const overlay =
+        document.querySelector(".sidebar-overlay");
+
+    sidebar.classList.toggle("mobile-open");
+
+    overlay.classList.toggle("show");
+
+}
+
+</script>
+
+
+</body>
+
+</html>

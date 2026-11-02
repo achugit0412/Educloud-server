@@ -1,0 +1,583 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marks & Grades | EduCloud</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/staff_marks.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #0b1120;
+            color: #e2e8f0;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 245px;
+            min-width: 245px;
+            background: #111c36;
+            padding: 24px 15px;
+            border-right: 1px solid #293650;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 28px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: #6366f1;
+            font-weight: 800;
+        }
+
+        .brand h2 {
+            font-size: 21px;
+            color: white;
+        }
+
+        .brand span {
+            font-size: 12px;
+            color: #a5b4fc;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 14px;
+        }
+
+        .sidebar nav a:hover,
+        .sidebar nav a.active {
+            background: #3730a3;
+            color: white;
+        }
+
+        .menu-title {
+            margin: 23px 10px 8px;
+            font-size: 11px;
+            color: #94a3b8;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .topbar h1 {
+            color: #f8fafc;
+            font-size: 27px;
+            margin-bottom: 7px;
+        }
+
+        .topbar p,
+        .panel-subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card,
+        .filter-card,
+        .table-card {
+            background: #151f35;
+            border: 1px solid #293650;
+            border-radius: 13px;
+        }
+
+        .stat-card {
+            padding: 20px;
+        }
+
+        .stat-card span {
+            color: #a5b4fc;
+            font-size: 13px;
+        }
+
+        .stat-card h2 {
+            color: white;
+            font-size: 27px;
+            margin-top: 8px;
+        }
+
+        .filter-card {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            padding: 20px;
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px 12px;
+            background: #0f172a;
+            border: 1px solid #35435e;
+            border-radius: 8px;
+            color: #f8fafc;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #818cf8;
+        }
+
+        .table-header {
+            padding: 21px;
+            border-bottom: 1px solid #293650;
+        }
+
+        .table-header h2 {
+            color: white;
+            font-size: 19px;
+            margin-bottom: 6px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            white-space: nowrap;
+        }
+
+        thead {
+            background: #1b2943;
+        }
+
+        th {
+            color: #a5b4fc;
+            font-size: 12px;
+            text-align: left;
+            text-transform: uppercase;
+            padding: 15px;
+        }
+
+        td {
+            padding: 14px 15px;
+            border-top: 1px solid #293650;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        tbody tr:hover {
+            background: #1b2943;
+        }
+
+        td strong {
+            color: #f8fafc;
+        }
+
+        .mark-input {
+            width: 85px;
+            min-height: 36px;
+            padding: 7px;
+        }
+
+        .grade {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            background: #312e81;
+            color: #c7d2fe;
+        }
+
+        .save-btn {
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 11px 18px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .save-btn:hover {
+            background: #4f46e5;
+        }
+
+        .table-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding: 18px;
+            border-top: 1px solid #293650;
+        }
+
+        .empty-state {
+            padding: 30px;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 210px;
+                min-width: 210px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">EC</div>
+            <div>
+                <h2>EduCloud</h2>
+                <span>Staff Portal</span>
+            </div>
+        </div>
+
+        <nav>
+            <a href="/staff/dashboard"><span>⌂</span> Dashboard</a>
+            <a href="/staff/students"><span>👨‍🎓</span> Students</a>
+            <a href="/staff/attendance"><span>✓</span> Attendance</a>
+            <a href="{{ url_for('staff_marks') }}" class="active">
+                <span>▣</span> Marks &amp; Grades
+            </a>
+            <a href="{{ url_for('staff_exams') }}"><span>📝</span> Exams</a>
+            <a href="/staff/timetable"><span>📅</span> Timetable</a>
+            <a href="/staff/notifications"><span>🔔</span> Notifications</a>
+            <a href="/staff/venue-updates"><span>📍</span> Venue Updates</a>
+            <a href="/staff/placements"><span>💼</span> Placements</a>
+
+            <div class="menu-title">ACCOUNT</div>
+            <a href="/student/profile"><span>👤</span> My Profile</a>
+            <a href="/student/change-password"><span>🔒</span> Change Password</a>
+            <a href="/"><span>↪</span> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="topbar">
+            <div>
+                <h1>Marks &amp; Grades</h1>
+                <p>Enter, update and manage student examination marks.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span>Total Students</span>
+                <h2>{{ students|length }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Students Displayed</span>
+                <h2 id="displayedCount">{{ students|length }}</h2>
+            </div>
+
+            <div class="stat-card">
+                <span>Selected Examination</span>
+                <h2 id="selectedExamDisplay">Internal</h2>
+            </div>
+        </div>
+
+        <form method="POST" action="/staff/marks/save" id="marksForm">
+
+            <div class="filter-card">
+                <select id="subject" name="subject" required>
+    <option value="">Select Subject</option>
+    {% for subject_name in subjects %}
+        <option value="{{ subject_name }}">
+            {{ subject_name }}
+        </option>
+    {% endfor %}
+</select>
+
+                <div>
+                    <label for="exam_type">Examination</label>
+                    <select id="exam_type" name="exam_type" required>
+                        <option value="Internal">Internal</option>
+                        <option value="External">External</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="studentSearch">Search Student</label>
+                    <input type="text" id="studentSearch"
+                           placeholder="Search name or roll number..."
+                           oninput="filterStudents()">
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h2>Student Marks Entry</h2>
+                    <p class="panel-subtitle">
+                        Enter the marks for the selected subject and examination.
+                    </p>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Roll Number</th>
+                            <th>Student Name</th>
+                            <th>Internal Marks</th>
+                            <th>External Marks</th>
+                            <th>Total</th>
+                            <th>Grade</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="studentTable">
+                        {% for student in students %}
+                        <tr data-search="{{ student.roll_number|default('') }} {{ student.name|default('') }}">
+                           <td>
+    <strong>{{ student.register_no }}</strong>
+</td>
+
+                            <td>{{ student.name }}</td>
+
+                            <td>
+                                <input class="mark-input internal-mark"
+                                       type="number"
+                                       name="internal_{{ student.id }}"
+                                       min="0"
+                                       max="30"
+                                       step="0.5"
+                                       value="{{ student.internal_marks|default('', true) }}"
+                                       placeholder="0–30"
+                                       aria-label="Internal marks for {{ student.name }}">
+                            </td>
+
+                            <td>
+                                <input class="mark-input external-mark"
+                                       type="number"
+                                       name="external_{{ student.id }}"
+                                       min="0"
+                                       max="70"
+                                       step="0.5"
+                                       value="{{ student.external_marks|default('', true) }}"
+                                       placeholder="0–70"
+                                       aria-label="External marks for {{ student.name }}">
+                            </td>
+
+                            <td class="total-cell">—</td>
+                            <td><span class="grade">—</span></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                No students found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <button type="submit" class="save-btn">
+                        Save Marks
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </main>
+</div>
+
+<script>
+function filterStudents() {
+    const search = document.getElementById("studentSearch")
+        .value.toLowerCase();
+
+    let count = 0;
+
+    document.querySelectorAll("#studentTable tr[data-search]")
+        .forEach(row => {
+            const matches = row.dataset.search.toLowerCase().includes(search);
+            row.style.display = matches ? "" : "none";
+            if (matches) count++;
+        });
+
+    document.getElementById("displayedCount").textContent = count;
+}
+
+function updateGrade(row) {
+    const internalInput = row.querySelector(".internal-mark");
+    const externalInput = row.querySelector(".external-mark");
+    const totalCell = row.querySelector(".total-cell");
+    const gradeElement = row.querySelector(".grade");
+
+    const internal = internalInput.value;
+    const external = externalInput.value;
+
+    if (internal === "" || external === "") {
+        totalCell.textContent = "—";
+        gradeElement.textContent = "—";
+        return;
+    }
+
+    const i = Number(internal);
+    const e = Number(external);
+
+    if (!Number.isFinite(i) || !Number.isFinite(e) ||
+        i < 0 || i > 30 || e < 0 || e > 70) {
+        totalCell.textContent = "Invalid";
+        gradeElement.textContent = "—";
+        return;
+    }
+
+    const total = i + e;
+    totalCell.textContent = total.toFixed(1);
+
+    if (total >= 90) gradeElement.textContent = "O";
+    else if (total >= 80) gradeElement.textContent = "A+";
+    else if (total >= 70) gradeElement.textContent = "A";
+    else if (total >= 60) gradeElement.textContent = "B+";
+    else if (total >= 50) gradeElement.textContent = "B";
+    else if (total >= 40) gradeElement.textContent = "C";
+    else gradeElement.textContent = "F";
+}
+
+document.querySelectorAll("#studentTable tr").forEach(row => {
+    const internal = row.querySelector(".internal-mark");
+    const external = row.querySelector(".external-mark");
+
+    if (internal && external) {
+        internal.addEventListener("input", () => updateGrade(row));
+        external.addEventListener("input", () => updateGrade(row));
+        updateGrade(row);
+    }
+});
+
+document.getElementById("exam_type").addEventListener("change", function() {
+    document.getElementById("selectedExamDisplay").textContent = this.value;
+});
+
+document.getElementById("marksForm").addEventListener("submit", function(event) {
+    const subject = document.getElementById("subject").value;
+
+    if (!subject) {
+        event.preventDefault();
+        alert("Please select a subject.");
+        return;
+    }
+
+    const rows = document.querySelectorAll("#studentTable tr");
+
+    for (const row of rows) {
+        if (row.style.display === "none") continue;
+
+        const internal = row.querySelector(".internal-mark");
+        const external = row.querySelector(".external-mark");
+
+        if (!internal || !external) continue;
+
+        if ((internal.value === "") !== (external.value === "")) {
+            event.preventDefault();
+            alert("Enter both internal and external marks, or leave both blank.");
+            return;
+        }
+
+        if (internal.value !== "" &&
+            (Number(internal.value) < 0 || Number(internal.value) > 30 ||
+             Number(external.value) < 0 || Number(external.value) > 70)) {
+            event.preventDefault();
+            alert("Internal marks must be between 0 and 30; external marks between 0 and 70.");
+            return;
+        }
+    }
+});
+</script>
+
+</body>
+</html>

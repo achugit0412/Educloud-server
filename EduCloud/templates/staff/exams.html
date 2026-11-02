@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exams | EduCloud Staff Portal</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/staff_exams.css') }}">
+</head>
+
+<body>
+<div class="portal">
+
+    
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <!-- BRAND -->
+    <div class="brand">
+        <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div>
+            <h2>EduCloud</h2>
+            <span>Staff Portal</span>
+        </div>
+    </div>
+
+    <!-- MENU TITLE -->
+    <div class="menu-title">STAFF MENU</div>
+
+    <!-- MAIN NAVIGATION -->
+    <nav class="sidebar-menu">
+
+        <a href="/staff/dashboard">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/staff/students">
+            <i class="bi bi-people-fill"></i>
+            <span>Students</span>
+        </a>
+
+        <a href="/staff/attendance">
+            <i class="bi bi-calendar-check-fill"></i>
+            <span>Attendance</span>
+        </a>
+
+        <a href="/staff/marks">
+            <i class="bi bi-bar-chart-fill"></i>
+            <span>Marks &amp; Grades</span>
+        </a>
+
+        <a href="/staff/exams" class="active">
+            <i class="bi bi-journal-text"></i>
+            <span>Exams</span>
+        </a>
+
+        <a href="/staff/timetable">
+            <i class="bi bi-calendar3"></i>
+            <span>Timetable</span>
+        </a>
+
+        <a href="/staff/notifications">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notifications</span>
+        </a>
+
+        <a href="/staff/venue-updates">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>Venue Updates</span>
+        </a>
+
+        <a href="/staff/events">
+            <i class="bi bi-calendar-event-fill"></i>
+            <span>Events</span>
+        </a>
+
+        <a href="/staff/placements">
+            <i class="bi bi-briefcase-fill"></i>
+            <span>Placements</span>
+        </a>
+
+    </nav>
+
+    <!-- BOTTOM NAVIGATION -->
+    <div class="sidebar-bottom">
+
+        <a href="/staff/profile">
+            <i class="bi bi-person-circle"></i>
+            <span>My Profile</span>
+        </a>
+
+        <a href="/staff/change-password">
+            <i class="bi bi-shield-lock-fill"></i>
+            <span>Change Password</span>
+        </a>
+
+        <a href="/logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
+
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <div class="breadcrumb">
+                    Staff Portal <i class="bi bi-chevron-right"></i> Exams
+                </div>
+                <h1>Exam Management</h1>
+                <p>Schedule and manage examinations.</p>
+            </div>
+
+            <div class="topbar-right">
+                <div class="staff-mini">
+                    <div class="staff-avatar">
+                        {{ session.get('name', 'ST')[:2]|upper }}
+                    </div>
+                    <div>
+                        <strong>{{ session.get('name', 'Staff') }}</strong>
+                        <small>Staff Portal</small>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="content">
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="bi bi-journal-text"></i></div>
+                    <div>
+                        <span>Total Exams</span>
+                        <h3>{{ exams|length }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange"><i class="bi bi-clock-fill"></i></div>
+                    <div>
+                        <span>Upcoming</span>
+                        <h3>{{ exams|selectattr('status', 'equalto', 'Upcoming')|list|length }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="bi bi-check-circle-fill"></i></div>
+                    <div>
+                        <span>Completed</span>
+                        <h3>{{ exams|selectattr('status', 'equalto', 'Completed')|list|length }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple"><i class="bi bi-building-fill"></i></div>
+                    <div>
+                        <span>Exam Venues</span>
+                        <h3>{{ exams|map(attribute='venue')|select|unique|list|length }}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-header">
+                <div>
+                    <h2>Exam Schedule</h2>
+                    <p>Manage upcoming and completed examinations.</p>
+                </div>
+
+                <button class="create-btn" onclick="openExamModal()">
+                    <i class="bi bi-plus-lg"></i> Schedule Exam
+                </button>
+            </div>
+
+            <div class="filter-panel">
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchExam"
+                           placeholder="Search subject or exam..."
+                           oninput="filterExams()">
+                </div>
+
+                <select id="typeFilter" onchange="filterExams()">
+                    <option value="all">All Types</option>
+                    <option value="Theory">Theory</option>
+                    <option value="Practical">Practical</option>
+                </select>
+
+                <select id="statusFilter" onchange="filterExams()">
+                    <option value="all">All Status</option>
+                    <option value="Upcoming">Upcoming</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <div>
+                        <strong>Examination Schedule</strong>
+                        <span id="resultCount">{{ exams|length }} examinations</span>
+                    </div>
+                    <span class="semester-badge">Live Database Records</span>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Exam</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Type</th>
+                                <th>Class</th>
+                                <th>Venue</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="examTable">
+                            {% for exam in exams %}
+                            <tr data-id="{{ exam.id }}"
+                                data-type="{{ exam.exam_type }}"
+                                data-status="{{ exam.status or 'Upcoming' }}">
+
+                                <td>
+                                    <div class="exam-cell">
+                                        <div class="exam-icon {% if exam.exam_type == 'Practical' %}cyan{% else %}purple{% endif %}">
+                                            <i class="bi {% if exam.exam_type == 'Practical' %}bi-terminal-fill{% else %}bi-journal-text{% endif %}"></i>
+                                        </div>
+                                        <div>
+                                            <strong>{{ exam.subject }}</strong>
+                                            <span>{{ exam.course_code or '—' }}</span>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>{{ exam.exam_date.strftime('%d %b %Y') if exam.exam_date else '—' }}</td>
+                              <td>
+    {{ exam.time_display or 'Time TBA' }}
+</td>
+
+                                <td>
+                                    <span class="type {{ 'practical' if exam.exam_type == 'Practical' else 'theory' }}">
+                                        {{ exam.exam_type }}
+                                    </span>
+                                </td>
+
+                                <td>{{ exam.class_name or '—' }}</td>
+                                <td>{{ exam.venue or '—' }}</td>
+
+                                <td>
+                                    <span class="status {{ 'completed' if exam.status == 'Completed' else 'upcoming' }}">
+                                        {{ exam.status or 'Upcoming' }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button class="action-btn" type="button"
+        title="Edit exam"
+        onclick="editExam(this)">
+    <i class="bi bi-pencil-square"></i>
+</button>
+
+                                    <button class="action-btn delete" type="button"
+                                            title="Delete exam"
+                                            onclick="deleteExam(this)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center py-4">
+                                    No examinations found. Schedule your first exam.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon purple"><i class="bi bi-info-circle-fill"></i></div>
+                    <div>
+                        <strong>Exam Management</strong>
+                        <p>Faculty can schedule examinations and assign venues.</p>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-icon orange"><i class="bi bi-bell-fill"></i></div>
+                    <div>
+                        <strong>Student Notifications</strong>
+                        <p>Exam schedule notifications can be integrated with the notifications module.</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<div class="modal-overlay" id="examModal">
+    <div class="exam-modal">
+        <button class="close-modal" onclick="closeExamModal()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <h2>Schedule New Exam</h2>
+        <p>Enter the examination details.</p>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="examSubject">Subject</label>
+                <input id="examSubject" type="text"
+                       placeholder="e.g. Data Structures" required>
+            </div>
+
+            <div class="form-group">
+                <label for="examCourseCode">Course Code</label>
+                <input id="examCourseCode" type="text"
+                       placeholder="e.g. CS3501">
+            </div>
+
+            <div class="form-group">
+                <label for="examDate">Date</label>
+                <input id="examDate" type="date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="examTime">Time</label>
+                <input id="examTime" type="time" required>
+            </div>
+
+            <div class="form-group">
+                <label for="examType">Exam Type</label>
+                <select id="examType">
+                    <option value="Theory">Theory</option>
+                    <option value="Practical">Practical</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="examClass">Class</label>
+                <select id="examClass">
+                    <option value="">Select class</option>
+                    <option>III CSE-A</option>
+                    <option>III CSE-B</option>
+                </select>
+            </div>
+
+            <div class="form-group full">
+                <label for="examVenue">Venue</label>
+                <input id="examVenue" type="text" placeholder="e.g. CSE-301">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeExamModal()">Cancel</button>
+            <button class="schedule-btn" onclick="scheduleExam()">
+                <i class="bi bi-check2"></i> Schedule Exam
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterExams() {
+    const search = document.getElementById("searchExam").value.toLowerCase().trim();
+    const type = document.getElementById("typeFilter").value;
+    const status = document.getElementById("statusFilter").value;
+    const rows = document.querySelectorAll("#examTable tr[data-id]");
+    let count = 0;
+
+    rows.forEach(row => {
+        const matches =
+            row.innerText.toLowerCase().includes(search) &&
+            (type === "all" || row.dataset.type === type) &&
+            (status === "all" || row.dataset.status === status);
+
+        row.style.display = matches ? "" : "none";
+        if (matches) count++;
+    });
+
+    document.getElementById("resultCount").textContent =
+        `${count} examination${count !== 1 ? "s" : ""}`;
+}
+
+function openExamModal() {
+    document.getElementById("examSubject").value = "";
+    document.getElementById("examCourseCode").value = "";
+    document.getElementById("examDate").value = "";
+    document.getElementById("examTime").value = "";
+    document.getElementById("examType").value = "Theory";
+    document.getElementById("examClass").value = "";
+    document.getElementById("examVenue").value = "";
+
+    document.getElementById("examModal").classList.add("show");
+}
+
+function closeExamModal() {
+    document.getElementById("examModal").classList.remove("show");
+}
+
+async function scheduleExam() {
+    const payload = {
+        subject: document.getElementById("examSubject").value.trim(),
+        course_code: document.getElementById("examCourseCode").value.trim(),
+        exam_date: document.getElementById("examDate").value,
+        exam_time: document.getElementById("examTime").value,
+        exam_type: document.getElementById("examType").value,
+        class_name: document.getElementById("examClass").value,
+        venue: document.getElementById("examVenue").value.trim()
+    };
+
+    if (!payload.subject || !payload.exam_date || !payload.exam_time) {
+        alert("Please enter the subject, date and time.");
+        return;
+    }
+
+    try {
+        const response = await fetch("/staff/exams/add", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Unable to schedule exam.");
+        }
+
+        alert(result.message || "Exam scheduled successfully.");
+        closeExamModal();
+        window.location.reload();
+
+    } catch (error) {
+        alert(error.message || "Unable to schedule exam.");
+    }
+}
+
+function editExam(button) {
+    const row = button.closest("tr");
+    const cells = row.querySelectorAll("td");
+
+    document.getElementById("editExamId").value = row.dataset.id;
+    document.getElementById("editSubject").value =
+        cells[0].querySelector("strong").textContent.trim();
+
+    document.getElementById("editCourseCode").value =
+        cells[0].querySelector("span").textContent.trim() === "—"
+            ? ""
+            : cells[0].querySelector("span").textContent.trim();
+
+    const dateText = cells[1].textContent.trim();
+    const date = new Date(dateText);
+
+    if (!isNaN(date.getTime())) {
+        document.getElementById("editDate").value =
+            `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    }
+
+    const timeText = cells[2].textContent.trim();
+    const match = timeText.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+
+    if (match) {
+        let hour = Number(match[1]);
+        const minute = match[2];
+
+        if (match[3].toUpperCase() === "PM" && hour !== 12) hour += 12;
+        if (match[3].toUpperCase() === "AM" && hour === 12) hour = 0;
+
+        document.getElementById("editTime").value =
+            `${String(hour).padStart(2, "0")}:${minute}`;
+    }
+
+    document.getElementById("editType").value =
+        cells[3].textContent.trim();
+
+    document.getElementById("editClass").value =
+        cells[4].textContent.trim() === "—" ? "" : cells[4].textContent.trim();
+
+    document.getElementById("editVenue").value =
+        cells[5].textContent.trim() === "—" ? "" : cells[5].textContent.trim();
+
+    document.getElementById("editExamModal").classList.add("show");
+}
+
+function closeEditModal() {
+    document.getElementById("editExamModal").classList.remove("show");
+}
+
+async function saveExamChanges() {
+    const examId = document.getElementById("editExamId").value;
+
+    const payload = {
+        subject: document.getElementById("editSubject").value.trim(),
+        course_code: document.getElementById("editCourseCode").value.trim(),
+        exam_date: document.getElementById("editDate").value,
+        exam_time: document.getElementById("editTime").value,
+        exam_type: document.getElementById("editType").value,
+        class_name: document.getElementById("editClass").value.trim(),
+        venue: document.getElementById("editVenue").value.trim()
+    };
+
+    if (!payload.subject || !payload.exam_date || !payload.exam_time) {
+        alert("Please enter the subject, date and time.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/staff/exams/update/${examId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const text = await response.text();
+        let result;
+
+        try {
+            result = JSON.parse(text);
+        } catch {
+            console.error("Server response:", text);
+            throw new Error(
+                "Server returned an HTML error page. Check the Flask terminal."
+            );
+        }
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Unable to update exam.");
+        }
+
+        alert("Exam updated successfully!");
+        window.location.reload();
+
+    } catch (error) {
+        alert(error.message);
+    }
+}
+async function deleteExam(button) {
+    const row = button.closest("tr");
+    const examId = row.dataset.id;
+    const subject = row.querySelector(".exam-cell strong").textContent.trim();
+
+    if (!confirm(`Delete the exam "${subject}"? This will remove it from the database.`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/staff/exams/delete/${examId}`, {
+            method: "POST"
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Unable to delete exam.");
+        }
+
+        alert(result.message || "Exam deleted successfully.");
+        window.location.reload();
+
+    } catch (error) {
+        alert(error.message || "Unable to delete exam.");
+    }
+}
+
+filterExams();
+</script>
+<div class="modal-overlay" id="editExamModal">
+    <div class="exam-modal">
+        <button class="close-modal" onclick="closeEditModal()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <h2>Edit Exam</h2>
+        <p>Update the examination details.</p>
+
+        <input type="hidden" id="editExamId">
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="editSubject">Subject *</label>
+                <input id="editSubject" type="text" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editCourseCode">Course Code</label>
+                <input id="editCourseCode" type="text">
+            </div>
+
+            <div class="form-group">
+                <label for="editDate">Date *</label>
+                <input id="editDate" type="date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editTime">Time *</label>
+                <input id="editTime" type="time" required>
+            </div>
+
+            <div class="form-group">
+                <label for="editType">Exam Type</label>
+                <select id="editType">
+                    <option value="Theory">Theory</option>
+                    <option value="Practical">Practical</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="editClass">Class</label>
+                <input id="editClass" type="text">
+            </div>
+
+            <div class="form-group full">
+                <label for="editVenue">Venue</label>
+                <input id="editVenue" type="text">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeEditModal()">Cancel</button>
+            <button class="schedule-btn" onclick="saveExamChanges()">
+                Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

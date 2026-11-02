@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students | EduCloud Staff Portal</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/staff_students.css') }}">
+</head>
+
+<body>
+<div class="portal">
+
+   
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <!-- BRAND -->
+    <div class="brand">
+        <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div>
+            <h2>EduCloud</h2>
+            <span>Staff Portal</span>
+        </div>
+    </div>
+
+    <div class="menu-title">STAFF MENU</div>
+
+    <!-- MAIN NAVIGATION -->
+    <nav class="sidebar-menu">
+
+        <a href="/staff/dashboard">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/staff/students" class="active">
+            <i class="bi bi-people-fill"></i>
+            <span>Students</span>
+        </a>
+
+        <a href="/staff/attendance">
+            <i class="bi bi-calendar-check-fill"></i>
+            <span>Attendance</span>
+        </a>
+
+        <a href="/staff/marks">
+            <i class="bi bi-bar-chart-fill"></i>
+            <span>Marks &amp; Grades</span>
+        </a>
+
+        <a href="/staff/exams">
+            <i class="bi bi-journal-text"></i>
+            <span>Exams</span>
+        </a>
+
+        <a href="/staff/timetable">
+            <i class="bi bi-calendar3"></i>
+            <span>Timetable</span>
+        </a>
+
+        <a href="/staff/notifications">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notifications</span>
+        </a>
+
+        <a href="/staff/venue-updates">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>Venue Updates</span>
+        </a>
+
+        <a href="/staff/events">
+            <i class="bi bi-calendar-event"></i>
+            <span>Events</span>
+        </a>
+
+        <a href="/staff/placements">
+            <i class="bi bi-briefcase-fill"></i>
+            <span>Placements</span>
+        </a>
+
+    </nav>
+
+    <!-- ACCOUNT OPTIONS -->
+    <div class="sidebar-bottom">
+
+        <a href="/staff/profile">
+            <i class="bi bi-person-circle"></i>
+            <span>My Profile</span>
+        </a>
+
+        <a href="/staff/change-password">
+            <i class="bi bi-shield-lock-fill"></i>
+            <span>Change Password</span>
+        </a>
+
+        <a href="/logout">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+
+    </div>
+
+</aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div>
+                <div class="breadcrumb">
+                    Staff Portal
+                    <i class="bi bi-chevron-right"></i>
+                    Students
+                </div>
+
+                <h1>Students</h1>
+                <p>View and manage student academic information.</p>
+            </div>
+
+            <div class="topbar-right">
+                <div class="staff-mini">
+                    <div class="staff-avatar">
+                        {{ session.get('name', 'ST')[:2]|upper }}
+                    </div>
+
+                    <div>
+                        <strong>{{ session.get('name', 'Staff') }}</strong>
+                        <small>Staff Portal</small>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+
+        <section class="content">
+
+            <!-- STATISTICS -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <span>Total Students</span>
+                        <h3>{{ total_students }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="bi bi-person-check-fill"></i>
+                    </div>
+                    <div>
+                        <span>Registered Students</span>
+                        <h3>{{ active_students }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <div>
+                        <span>Above 8 CGPA</span>
+                        <h3>{{ above_8_cgpa }}</h3>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                    </div>
+                    <div>
+                        <span>Need Attention</span>
+                        <h3>{{ need_attention }}</h3>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- PAGE HEADER -->
+
+<div class="page-header">
+    <div>
+        <h2>Student Records</h2>
+        <p>Search and manage registered students.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+        <a href="{{ url_for('add_student') }}"
+           class="btn btn-primary">
+            <i class="bi bi-person-plus-fill"></i>
+            Add Student
+        </a>
+
+        <button class="export-btn" type="button"
+                onclick="exportStudents()">
+            <i class="bi bi-download"></i>
+            Export CSV
+        </button>
+    </div>
+</div>
+
+
+            <!-- FILTERS -->
+            <div class="filter-panel">
+
+                <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input type="text"
+                           id="searchInput"
+                           placeholder="Search name, email or register number..."
+                           oninput="filterStudents()">
+                </div>
+
+                <select id="yearFilter" onchange="filterStudents()">
+                    <option value="all">All Years</option>
+                    <option value="I">I Year</option>
+                    <option value="II">II Year</option>
+                    <option value="III">III Year</option>
+                    <option value="IV">IV Year</option>
+                </select>
+
+                <select id="departmentFilter" onchange="filterStudents()">
+                    <option value="all">All Departments</option>
+                    <option value="CSE">CSE</option>
+                    <option value="ECE">ECE</option>
+                    <option value="IT">IT</option>
+                </select>
+
+                <select id="statusFilter" onchange="filterStudents()">
+                    <option value="all">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Attention">Needs Attention</option>
+                </select>
+
+            </div>
+
+
+            <!-- STUDENT TABLE -->
+            <div class="table-card">
+
+                <div class="table-top">
+                    <div>
+                        <strong>Student List</strong>
+                        <span id="resultCount">
+                            Showing {{ students|length }} students
+                        </span>
+                    </div>
+
+                    <span class="semester-badge">
+                        Live Database Records
+                    </span>
+                </div>
+
+                <div class="table-wrapper">
+                    <table id="studentsTable">
+                        <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Register No.</th>
+                            <th>Department</th>
+                            <th>Year</th>
+                            <th>Attendance</th>
+                            <th>CGPA</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="studentTable">
+
+                        {% for student in students %}
+                        <tr
+                            data-year="{{ student.year_label }}"
+                            data-department="{{ student.department_short }}"
+                            data-status="{{ student.status_label }}">
+
+                            <td>
+                                <div class="student-cell">
+                                    <div class="student-avatar">
+                                        {{ student.initials }}
+                                    </div>
+
+                                    <div>
+                                        <strong>{{ student.name }}</strong>
+                                        <span>{{ student.email }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>{{ student.register_no }}</td>
+
+                            <td>{{ student.department }}</td>
+
+                            <td>{{ student.year_label }} Year</td>
+
+                            <td>
+                                {% if student.attendance_percentage is not none %}
+                                    {% if student.attendance_percentage >= 85 %}
+                                        <span class="attendance good">
+                                            {{ student.attendance_percentage }}%
+                                        </span>
+                                    {% elif student.attendance_percentage >= 75 %}
+                                        <span class="attendance warning">
+                                            {{ student.attendance_percentage }}%
+                                        </span>
+                                    {% else %}
+                                        <span class="attendance danger">
+                                            {{ student.attendance_percentage }}%
+                                        </span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="attendance">No data</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <strong>{{ "%.2f"|format(student.cgpa) }}</strong>
+                            </td>
+
+                            <td>
+                                {% if student.status_label == "Attention" %}
+                                    <span class="status attention">
+                                        Attention
+                                    </span>
+                                {% else %}
+                                    <span class="status active">
+                                        Active
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <button
+                                    class="view-btn"
+                                    type="button"
+                                    onclick="viewStudent(this)"
+                                    data-name="{{ student.name }}"
+                                    data-email="{{ student.email }}"
+                                    data-register="{{ student.register_no }}"
+                                    data-department="{{ student.department }}"
+                                    data-year="{{ student.year_label }} Year"
+                                    data-semester="{{ student.semester }}"
+                                    data-section="{{ student.section or 'Not assigned' }}"
+                                    data-attendance="{{ (student.attendance_percentage|string ~ '%') if student.attendance_percentage is not none else 'No data' }}"
+                                    data-cgpa="{{ '%.2f'|format(student.cgpa) }}">
+                                    View
+                                </button>
+                            </td>
+
+                        </tr>
+
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                No student records found in the database.
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <!-- INFORMATION -->
+            <div class="info-card">
+                <i class="bi bi-info-circle-fill"></i>
+                <div>
+                    <strong>Student Information</strong>
+                    <p>
+                        Student records are loaded from EduCloud's database.
+                        Attendance is calculated from recorded attendance entries.
+                        Students with attendance below 75% are flagged for attention.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+</div>
+
+
+<!-- STUDENT DETAILS MODAL -->
+<div class="modal-overlay" id="studentModal">
+
+    <div class="student-modal">
+
+        <button class="close-modal" type="button"
+                onclick="closeStudent()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="modal-profile">
+            <div class="modal-avatar" id="modalAvatar">ST</div>
+
+            <div>
+                <h2 id="modalName">Student Name</h2>
+                <span id="modalRegister">Register Number</span>
+            </div>
+        </div>
+
+        <div class="modal-grid">
+
+            <div>
+                <span>Email</span>
+                <strong id="modalEmail">-</strong>
+            </div>
+
+            <div>
+                <span>Department</span>
+                <strong id="modalDepartment">-</strong>
+            </div>
+
+            <div>
+                <span>Year</span>
+                <strong id="modalYear">-</strong>
+            </div>
+
+            <div>
+                <span>Semester</span>
+                <strong id="modalSemester">-</strong>
+            </div>
+
+            <div>
+                <span>Section</span>
+                <strong id="modalSection">-</strong>
+            </div>
+
+            <div>
+                <span>Attendance</span>
+                <strong id="modalAttendance">-</strong>
+            </div>
+
+            <div>
+                <span>CGPA</span>
+                <strong id="modalCgpa">-</strong>
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" onclick="closeStudent()">Close</button>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+function filterStudents() {
+    const search = document.getElementById("searchInput")
+        .value.toLowerCase().trim();
+
+    const year = document.getElementById("yearFilter").value;
+    const department = document.getElementById("departmentFilter").value;
+    const status = document.getElementById("statusFilter").value;
+
+    const rows = document.querySelectorAll(
+        "#studentTable tr[data-year]"
+    );
+
+    let count = 0;
+
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+
+        const matchesSearch = text.includes(search);
+        const matchesYear =
+            year === "all" || row.dataset.year === year;
+        const matchesDepartment =
+            department === "all" ||
+            row.dataset.department === department;
+        const matchesStatus =
+            status === "all" || row.dataset.status === status;
+
+        const show = matchesSearch && matchesYear &&
+                     matchesDepartment && matchesStatus;
+
+        row.style.display = show ? "" : "none";
+
+        if (show) count++;
+    });
+
+    document.getElementById("resultCount").textContent =
+        `Showing ${count} student${count !== 1 ? "s" : ""}`;
+}
+
+
+function viewStudent(button) {
+    const fields = {
+        modalName: button.dataset.name,
+        modalRegister: button.dataset.register,
+        modalEmail: button.dataset.email,
+        modalDepartment: button.dataset.department,
+        modalYear: button.dataset.year,
+        modalSemester: button.dataset.semester,
+        modalSection: button.dataset.section,
+        modalAttendance: button.dataset.attendance,
+        modalCgpa: button.dataset.cgpa
+    };
+
+    Object.entries(fields).forEach(([id, value]) => {
+        document.getElementById(id).textContent = value || "-";
+    });
+
+    const name = button.dataset.name || "ST";
+    document.getElementById("modalAvatar").textContent =
+        name.split(/\s+/).filter(Boolean)
+            .map(part => part[0]).join("").substring(0, 2).toUpperCase();
+
+    document.getElementById("studentModal").classList.add("show");
+}
+
+
+function closeStudent() {
+    document.getElementById("studentModal").classList.remove("show");
+}
+
+
+function exportStudents() {
+    const rows = document.querySelectorAll(
+        "#studentTable tr[data-year]"
+    );
+
+    const visibleRows = Array.from(rows).filter(
+        row => row.style.display !== "none"
+    );
+
+    const headers = [
+        "Student Name",
+        "Email",
+        "Register Number",
+        "Department",
+        "Year",
+        "Attendance",
+        "CGPA",
+        "Status"
+    ];
+
+    const data = [headers];
+
+    visibleRows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+
+        const name = cells[0].querySelector("strong")?.textContent.trim() || "";
+        const email = cells[0].querySelector("span")?.textContent.trim() || "";
+        const registerNo = cells[1].innerText.trim();
+        const department = cells[2].innerText.trim();
+        const year = cells[3].innerText.trim();
+        const attendance = cells[4].innerText.trim();
+        const cgpa = cells[5].innerText.trim();
+        const status = cells[6].innerText.trim();
+
+        data.push([
+            name, email, registerNo, department,
+            year, attendance, cgpa, status
+        ]);
+    });
+
+    const csv = data.map(row =>
+        row.map(value =>
+            '"' + String(value).replace(/"/g, '""') + '"'
+        ).join(",")
+    ).join("\r\n");
+
+    const blob = new Blob(["\uFEFF" + csv], {
+        type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "educloud_students.csv";
+    link.click();
+
+    URL.revokeObjectURL(url);
+}
+
+
+document.getElementById("studentModal").addEventListener(
+    "click",
+    function(event) {
+        if (event.target === this) closeStudent();
+    }
+);
+
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") closeStudent();
+});
+</script>
+
+</body>
+</html>

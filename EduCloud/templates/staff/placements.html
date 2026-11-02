@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placements | EduCloud</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/staff_placements.css') }}">
+</head>
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">EC</div>
+            <div>
+                <h2>EduCloud</h2>
+                <span>Staff Portal</span>
+            </div>
+        </div>
+
+        <nav>
+            <a href="/staff/dashboard"><span>⌂</span> Dashboard</a>
+            <a href="/staff/students"><span>👨‍🎓</span> Students</a>
+            <a href="/staff/attendance"><span>✓</span> Attendance</a>
+            <a href="/staff/marks"><span>▣</span> Marks &amp; Grades</a>
+            <a href="/staff/exams"><span>📝</span> Exams</a>
+            <a href="/staff/timetable"><span>📅</span> Timetable</a>
+            <a href="/staff/notifications"><span>🔔</span> Notifications</a>
+            <a href="/staff/venue-updates"><span>📍</span> Venue Updates</a>
+            <a href="/staff/placements" class="active"><span>💼</span> Placements</a>
+
+            <div class="menu-title">ACCOUNT</div>
+            <a href="/staff/profile"><span>👤</span> My Profile</a>
+            <a href="/staff/change-password"><span>🔒</span> Change Password</a>
+            <a href="/"><span>↪</span> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="topbar">
+            <div>
+                <h1>Placement Management</h1>
+                <p>Manage companies and placement drives</p>
+            </div>
+            <button class="add-btn" onclick="openModal()">
+                + Add Placement
+            </button>
+        </div>
+
+        {% set open_count = placements | selectattr('status', 'equalto', 'Open') | list | length %}
+        {% set upcoming_count = placements | selectattr('status', 'equalto', 'Upcoming') | list | length %}
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🏢</div>
+                <div>
+                    <span>Total Drives</span>
+                    <h2>{{ placements | length }}</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📢</div>
+                <div>
+                    <span>Open Drives</span>
+                    <h2>{{ open_count }}</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div>
+                    <span>Upcoming Drives</span>
+                    <h2>{{ upcoming_count }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-card">
+            <div class="search-box">
+                <label for="searchInput">Search Company or Role</label>
+                <input type="text" id="searchInput"
+                       placeholder="Search company or role..."
+                       oninput="filterCompanies()">
+            </div>
+
+            <div class="filter-group">
+                <label for="statusFilter">Drive Status</label>
+                <select id="statusFilter" onchange="filterCompanies()">
+                    <option value="all">All Status</option>
+                    <option value="Open">Open</option>
+                    <option value="Upcoming">Upcoming</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="typeFilter">Job Type</label>
+                <select id="typeFilter" onchange="filterCompanies()">
+                    <option value="all">All Types</option>
+                    <option value="Software">Software</option>
+                    <option value="Analytics">Analytics</option>
+                    <option value="Core">Core</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="table-header">
+                <div>
+                    <h2>Placement Drives</h2>
+                    <p>Current and upcoming recruitment opportunities</p>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Job Role</th>
+                            <th>Package</th>
+                            <th>Drive Date</th>
+                            <th>Minimum CGPA</th>
+                            <th>Job Type</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="companyTable">
+                        {% for p in placements %}
+                        <tr
+                            data-search="{{ p.company_name }} {{ p.job_role }}"
+                            data-status="{{ p.status or '' }}"
+                            data-type="{{ p.job_type or '' }}">
+
+                            <td><strong>{{ p.company_name }}</strong></td>
+                            <td>{{ p.job_role }}</td>
+                            <td class="package">
+                                {% if p.package_lpa is not none %}
+                                    ₹{{ "%.2f"|format(p.package_lpa|float) }} LPA
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if p.drive_date %}
+                                    {{ p.drive_date.strftime('%d %b %Y') }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if p.minimum_cgpa is not none %}
+                                    {{ "%.2f"|format(p.minimum_cgpa|float) }}+
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+                            </td>
+                            <td>{{ p.job_type or 'Not specified' }}</td>
+                            <td>
+                                <span class="status {{ (p.status or 'Upcoming')|lower }}">
+                                    {{ p.status or 'Upcoming' }}
+                                </span>
+                            </td>
+                            <td class="actions">
+                                <button type="button"
+                                        class="action-btn"
+                                        data-id="{{ p.id }}"
+                                        data-company="{{ p.company_name }}"
+                                        data-role="{{ p.job_role }}"
+                                        data-package="{{ p.package_lpa if p.package_lpa is not none else '' }}"
+                                        data-date="{{ p.drive_date.strftime('%Y-%m-%d') if p.drive_date else '' }}"
+                                        data-cgpa="{{ p.minimum_cgpa if p.minimum_cgpa is not none else '' }}"
+                                        data-job-type="{{ p.job_type or '' }}"
+                                        data-status="{{ p.status or 'Upcoming' }}"
+                                        onclick="editPlacementFromButton(this)">
+                                    Edit
+                                </button>
+
+                                
+<form method="POST"
+      action="/staff/placements/delete/{{ p.id }}"
+      class="delete-placement-form">
+    <button type="submit" class="delete-btn">
+        Delete
+    </button>
+</form>
+
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                No placement drives found. Click
+                                <strong>+ Add Placement</strong> to create one.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<div class="modal-overlay" id="companyModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div>
+                <h2 id="modalTitle">Add Placement Drive</h2>
+                <p>Enter the placement drive details</p>
+            </div>
+            <button type="button" onclick="closeModal()">×</button>
+        </div>
+
+        <form id="placementForm" method="POST"
+              action="/staff/placements/add">
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="company_name">Company Name</label>
+                    <input type="text" id="company_name" name="company_name"
+                           maxlength="150" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="job_role">Job Role</label>
+                    <input type="text" id="job_role" name="job_role"
+                           maxlength="150" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="package_lpa">Package (LPA)</label>
+                    <input type="number" id="package_lpa" name="package_lpa"
+                           step="0.01" min="0" max="9999.99">
+                </div>
+
+                <div class="form-group">
+                    <label for="drive_date">Drive Date</label>
+                    <input type="date" id="drive_date" name="drive_date">
+                </div>
+
+                <div class="form-group">
+                    <label for="minimum_cgpa">Minimum CGPA</label>
+                    <input type="number" id="minimum_cgpa" name="minimum_cgpa"
+                           step="0.01" min="0" max="10">
+                </div>
+
+                <div class="form-group">
+                    <label for="job_type">Job Type</label>
+                    <select id="job_type" name="job_type">
+                        <option value="">Select Type</option>
+                        <option value="Software">Software</option>
+                        <option value="Analytics">Analytics</option>
+                        <option value="Core">Core</option>
+                    </select>
+                </div>
+
+                <div class="form-group full">
+                    <label for="status">Drive Status</label>
+                    <select id="status" name="status" required>
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Open">Open</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn"
+                        onclick="closeModal()">Cancel</button>
+                <button type="submit" class="save-btn" id="saveBtn">
+                    Save Placement Drive
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openModal() {
+    document.getElementById("placementForm").reset();
+    document.getElementById("placementForm").action = "/staff/placements/add";
+    document.getElementById("modalTitle").textContent = "Add Placement Drive";
+    document.getElementById("saveBtn").textContent = "Save Placement Drive";
+    document.getElementById("companyModal").classList.add("show");
+}
+
+function closeModal() {
+    document.getElementById("companyModal").classList.remove("show");
+}
+
+function editPlacementFromButton(button) {
+    editPlacement(
+        button.dataset.id,
+        button.dataset.company || "",
+        button.dataset.role || "",
+        button.dataset.package || "",
+        button.dataset.date || "",
+        button.dataset.cgpa || "",
+        button.dataset.jobType || "",
+        button.dataset.status || "Upcoming"
+    );
+}
+
+function editPlacement(id, company, role, packageLpa, date, cgpa, type, status) {
+    const form = document.getElementById("placementForm");
+
+    form.action = `/staff/placements/edit/${id}`;
+    document.getElementById("modalTitle").textContent = "Edit Placement Drive";
+    document.getElementById("saveBtn").textContent = "Update Placement Drive";
+
+    document.getElementById("company_name").value = company;
+    document.getElementById("job_role").value = role;
+    document.getElementById("package_lpa").value = packageLpa;
+    document.getElementById("drive_date").value = date;
+    document.getElementById("minimum_cgpa").value = cgpa;
+    document.getElementById("job_type").value = type;
+    document.getElementById("status").value = status;
+
+    document.getElementById("companyModal").classList.add("show");
+}
+
+function filterCompanies() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const status = document.getElementById("statusFilter").value;
+    const type = document.getElementById("typeFilter").value;
+
+    document.querySelectorAll("#companyTable tr[data-search]").forEach(row => {
+        const searchMatch = row.dataset.search.toLowerCase().includes(search);
+        const statusMatch = status === "all" || row.dataset.status === status;
+        const typeMatch = type === "all" || row.dataset.type === type;
+
+        row.style.display =
+            searchMatch && statusMatch && typeMatch ? "" : "none";
+    });
+}
+
+document.getElementById("companyModal").addEventListener("click", function(event) {
+    if (event.target === this) closeModal();
+});
+
+
+document.getElementById("placementForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const form = this;
+    const saveBtn = document.getElementById("saveBtn");
+
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving...";
+
+    try {
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: new FormData(form)
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            alert(result.message);
+            window.location.href = "/staff/placements";
+        } else {
+            alert(result.message || "Unable to save placement.");
+        }
+    } catch (error) {
+        console.error("Placement error:", error);
+        alert("Something went wrong. Check the Flask terminal.");
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent =
+            form.action.includes("/edit/")
+                ? "Update Placement Drive"
+                : "Save Placement Drive";
+    }
+});
+
+document.querySelectorAll(".delete-placement-form").forEach(form => {
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        if (!confirm("Are you sure you want to delete this placement drive?")) {
+            return;
+        }
+
+        const button = form.querySelector("button");
+        button.disabled = true;
+        button.textContent = "Deleting...";
+
+        try {
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: new FormData(form)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                window.location.href = "/staff/placements";
+            } else {
+                alert(result.message || "Unable to delete placement.");
+                button.disabled = false;
+                button.textContent = "Delete";
+            }
+        } catch (error) {
+            console.error("Delete placement error:", error);
+            alert("Something went wrong. Check the Flask terminal.");
+            button.disabled = false;
+            button.textContent = "Delete";
+        }
+    });
+});
+
+</script>
+
+</body>
+</html>

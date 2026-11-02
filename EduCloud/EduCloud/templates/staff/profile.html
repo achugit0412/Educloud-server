@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Profile | EduCloud</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/staff_profile.css') }}">
+</head>
+<body>
+
+<div class="profile-page">
+    <header class="page-header">
+        <div>
+            <p class="breadcrumb">Staff Portal / My Profile</p>
+            <h1>My Profile</h1>
+            <p class="subtitle">View and manage your staff account details.</p>
+        </div>
+        <div class="avatar">{{ staff.name[0]|upper }}</div>
+    </header>
+
+    <section class="profile-card">
+        <div class="profile-heading">
+            <div class="large-avatar">{{ staff.name[0]|upper }}</div>
+            <div>
+                <h2>{{ staff.name }}</h2>
+                <p>{{ staff.email }}</p>
+                <span class="role-badge">Staff Account</span>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('staff_profile') }}">
+            <h3>Personal Information</h3>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name"
+                           value="{{ staff.name }}" required maxlength="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email"
+                           value="{{ staff.email }}" required maxlength="254">
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Account Role</label>
+                    <input type="text" id="role" value="{{ staff.role|title }}"
+                           disabled>
+                </div>
+
+                <div class="form-group">
+                    <label for="created_at">Account Created</label>
+                    <input type="text" id="created_at"
+                           value="{{ staff.created_at or 'Not available' }}"
+                           disabled>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="reset" class="cancel-btn">Reset</button>
+                <button type="submit" class="save-btn">Save Changes</button>
+            </div>
+        </form>
+    </section>
+
+    <a class="back-link" href="{{ url_for('staff_dashboard') }}">
+        ← Back to Dashboard
+    </a>
+</div>
+
+</body>
+</html>

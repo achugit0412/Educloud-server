@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications | EduCloud Staff</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/staff_notifications.css') }}">
+</head>
+<body>
+<div class="layout">
+    
+<!-- SIDEBAR -->
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+
+    <div class="brand">
+        <div class="brand-icon">
+            <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div>
+            <h2>EduCloud</h2>
+            <span>Staff Portal</span>
+        </div>
+    </div>
+
+    <div class="menu-title">STAFF MENU</div>
+
+    <nav class="sidebar-menu">
+
+        <a href="/staff/dashboard">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/staff/students">
+            <i class="bi bi-people-fill"></i>
+            <span>Students</span>
+        </a>
+
+        <a href="/staff/attendance">
+            <i class="bi bi-calendar-check-fill"></i>
+            <span>Attendance</span>
+        </a>
+
+        <a href="/staff/marks">
+            <i class="bi bi-bar-chart-fill"></i>
+            <span>Marks & Grades</span>
+        </a>
+
+        <a href="/staff/exams">
+            <i class="bi bi-journal-text"></i>
+            <span>Exams</span>
+        </a>
+
+        <a href="/staff/timetable">
+            <i class="bi bi-calendar3"></i>
+            <span>Timetable</span>
+        </a>
+
+        <a href="/staff/notifications" class="active">
+            <i class="bi bi-bell-fill"></i>
+            <span>Notifications</span>
+        </a>
+
+        <a href="/staff/venue-updates">
+            <i class="bi bi-geo-alt-fill"></i>
+            <span>Venue Updates</span>
+        </a>
+
+        <a href="/staff/events">
+            <i class="bi bi-calendar-event-fill"></i>
+            <span>Events</span>
+        </a>
+
+        <a href="/staff/placements">
+            <i class="bi bi-briefcase-fill"></i>
+            <span>Placements</span>
+        </a>
+
+    </nav>
+
+    <!-- ACCOUNT SECTION -->
+<div class="sidebar-bottom">
+
+    <div class="menu-title">ACCOUNT</div>
+
+    <a href="/staff/profile">
+        <i class="bi bi-person-circle"></i>
+        <span>My Profile</span>
+    </a>
+
+    <a href="/staff/change-password">
+        <i class="bi bi-shield-lock-fill"></i>
+        <span>Change Password</span>
+    </a>
+
+    <a href="/logout">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+
+</div>
+
+</aside>
+
+
+
+    <main class="main-content">
+        <header class="topbar">
+            <div>
+                <h1>Notifications</h1>
+                <p>Create announcements that appear in the student portal.</p>
+            </div>
+            <button class="add-btn" type="button" onclick="openModal()">
+                + Create Notification
+            </button>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🔔</div>
+                <div><span>Total Notifications</span><h2>{{ notifications|length }}</h2></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📢</div>
+                <div><span>Published</span><h2>{{ notifications|selectattr('status', 'equalto', 'Published')|list|length }}</h2></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div><span>Drafts</span><h2>{{ notifications|selectattr('status', 'equalto', 'Draft')|list|length }}</h2></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div><span>Target Groups</span><h2>{{ notifications|map(attribute='target_audience')|unique|list|length }}</h2></div>
+            </div>
+        </section>
+
+        <section class="filter-card">
+            <div class="search-box">
+                <label for="searchInput">Search Notification</label>
+                <input type="text" id="searchInput"
+                       placeholder="Search by title..."
+                       oninput="filterNotifications()">
+            </div>
+            <div class="filter-group">
+                <label for="categoryFilter">Category</label>
+                <select id="categoryFilter" onchange="filterNotifications()">
+                    <option value="all">All Categories</option>
+                    <option value="Academic">Academic</option>
+                    <option value="Exam">Exam</option>
+                    <option value="Event">Event</option>
+                    <option value="Placement">Placement</option>
+                    <option value="General">General</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter" onchange="filterNotifications()">
+                    <option value="all">All Status</option>
+                    <option value="Published">Published</option>
+                    <option value="Draft">Draft</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="notification-card">
+            <div class="section-header">
+                <h2>Recent Notifications</h2>
+                <p>Published notices are visible to their selected audience.</p>
+            </div>
+            <div id="notificationList">
+                {% for notification in notifications %}
+                <article class="notification-item"
+                         data-id="{{ notification.id }}"
+                         data-title="{{ notification.title|e }}"
+                         data-category="{{ notification.category }}"
+                         data-status="{{ notification.status }}">
+                    <div class="notification-icon">
+                        {% if notification.category == 'Exam' %}📝
+                        {% elif notification.category == 'Academic' %}📚
+                        {% elif notification.category == 'Placement' %}💼
+                        {% elif notification.category == 'Event' %}🎯
+                        {% else %}🔔{% endif %}
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title-row">
+                            <h3>{{ notification.title }}</h3>
+                            <span class="status {{ notification.status|lower }}">
+                                {{ notification.status }}
+                            </span>
+                        </div>
+                        <p>{{ notification.message }}</p>
+                        <div class="notification-meta">
+                            <span>🏷 {{ notification.category }}</span>
+                            <span>
+                                👥 {{ 'All Students' if notification.target_audience|lower in ('student', 'all') else notification.target_audience }}
+                            </span>
+                            <span>
+                                🕒 {{ notification.created_at.strftime('%d %b %Y, %I:%M %p') if notification.created_at else '—' }}
+                            </span>
+                        </div>
+                    </div>
+                    <button class="delete-btn" type="button"
+                            aria-label="Delete notification"
+                            onclick="deleteNotification(this)">🗑</button>
+                </article>
+                {% else %}
+                <p class="notification-item">No notifications yet. Create one to get started.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="info-card">
+            <div class="info-icon">💡</div>
+            <div>
+                <h3>Notification Management</h3>
+                <p>Only published notifications are displayed to students. Drafts remain visible to staff.</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<div class="modal-overlay" id="notificationModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div>
+                <h2>Create Notification</h2>
+                <p>Send an announcement to students.</p>
+            </div>
+            <button type="button" aria-label="Close" onclick="closeModal()">×</button>
+        </div>
+        <form id="notificationForm" onsubmit="saveNotification(event)">
+            <div class="form-group">
+                <label for="notificationTitle">Notification Title</label>
+                <input type="text" id="notificationTitle"
+                       placeholder="Enter notification title" required>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="notificationCategory">Category</label>
+                    <select id="notificationCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="Academic">Academic</option>
+                        <option value="Exam">Exam</option>
+                        <option value="Event">Event</option>
+                        <option value="Placement">Placement</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notificationAudience">Target Audience</label>
+                    <select id="notificationAudience" required>
+                        <option value="student">All Students</option>
+                        <option value="III CSE-A">III CSE-A</option>
+                        <option value="III CSE-B">III CSE-B</option>
+                        <option value="III CSE-C">III CSE-C</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="notificationMessage">Message</label>
+                <textarea id="notificationMessage" rows="5"
+                          placeholder="Enter notification message..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="notificationStatus">Status</label>
+                <select id="notificationStatus" required>
+                    <option value="Published">Publish now</option>
+                    <option value="Draft">Save as draft</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="save-btn">Save Notification</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openModal() {
+    document.getElementById("notificationModal").classList.add("show");
+}
+
+function closeModal() {
+    document.getElementById("notificationModal").classList.remove("show");
+}
+
+async function saveNotification(event) {
+    event.preventDefault();
+    const payload = {
+        title: document.getElementById("notificationTitle").value.trim(),
+        category: document.getElementById("notificationCategory").value,
+        target_audience: document.getElementById("notificationAudience").value,
+        message: document.getElementById("notificationMessage").value.trim(),
+        status: document.getElementById("notificationStatus").value
+    };
+
+    try {
+        const response = await fetch("/staff/notifications/add", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Could not save notification.");
+        }
+        window.location.reload();
+    } catch (error) {
+        alert("Unable to save notification: " + error.message);
+    }
+}
+
+function filterNotifications() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    const category = document.getElementById("categoryFilter").value;
+    const status = document.getElementById("statusFilter").value;
+
+    document.querySelectorAll(".notification-item[data-id]").forEach(item => {
+        const matches = (item.dataset.title || "").toLowerCase().includes(search) &&
+            (category === "all" || item.dataset.category === category) &&
+            (status === "all" || item.dataset.status === status);
+        item.style.display = matches ? "flex" : "none";
+    });
+}
+
+async function deleteNotification(button) {
+    const item = button.closest(".notification-item");
+    const id = item.dataset.id;
+    if (!id || !confirm("Delete this notification?")) return;
+
+    try {
+        const response = await fetch(`/staff/notifications/delete/${id}`, {
+            method: "POST"
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || "Could not delete notification.");
+        }
+        window.location.reload();
+    } catch (error) {
+        alert("Unable to delete notification: " + error.message);
+    }
+}
+</script>
+</body>
+</html>
